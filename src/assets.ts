@@ -1,8 +1,13 @@
 export const assets = {
-    Sky1: "./Sky/Sky_layer011.png",
-    Sky2: "./Sky/Sky_layer022.png",
-    Sky3: "./Sky/Sky_layer033.png",
+    //SceneGame
+    Sky1: "./SceneGame/Sky_layer011.png",
+    Sky2: "./SceneGame/Sky_layer022.png",
+    Sky3: "./SceneGame/Sky_layer033.png",
+    Camion:"./SceneGame/Truckk.png",
+    Bridge:"./SceneGame/Bridgee.png",
 
+
+    //Player
     Jump1:"./Character/Jump/11.png",
     Jump2:"./Character/Jump/22.png",
     Jump3:"./Character/Jump/33.png",
@@ -24,10 +29,6 @@ export const assets = {
     Roll7:"./Character/Roll/Roll7.png",
 
 
-    Camion:"./Truckk.png",
-
-    Bridge:"./Bridgee.png",
-
     //UI Assets
     Pause:"./UI/PauseIcon.png",
     Play:"./UI/PlayIcon.png",
@@ -36,21 +37,27 @@ export const assets = {
     Blue:"./UI/Blue.png",
     SndOn:"./UI/SoundOnIcon.png",
     SndOff:"./UI/SoundOffIcon.png",
+    PlayMenu:"./UI/PlayMenu.png",
+    ExitMenu:"./UI/ExitMenu.png",
+    Music1Menu: "./UI/Music1Menu.png",
+    Music2Menu: "./UI/Music2Menu.png",
 
+
+    //Music & Sounds
     MusicGame:"./Music/Soy_sabalero_8Bits.mp3",
     MusicMenu:"./Music/Dame_un_beso_8Bits.mp3",
 
+
+    //Fonts
     Minecraft:"./Fonts/Minecraft.ttf",
-    //Test: "https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap",
 
-    BG0: "./Menu00.png",
-    BG1: "./Menu111.png",
-    Test: "./test.png",
-    By: "./Byy.png",
 
-    SantaFe: "./SantaFe3.png",
-    Runner: "./Runner2.png",
-    Setuval: "./Setuval1.png",
-
-    Base: "./Base2.png",
+    //SceneMenu
+    BG0: "./SceneMenu/SkyMenu.png",
+    BG1: "./SceneMenu/Bridge.png",
+    By: "./SceneMenu/By.png",
+    SantaFe: "./SceneMenu/SantaFe.png",
+    Runner: "./SceneMenu/Runner.png",
+    Setuval: "./SceneMenu/SetubalLagoon.png",
+    Base: "./SceneMenu/Base.png",
 }

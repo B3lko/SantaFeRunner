@@ -116,7 +116,7 @@ private sndMG = sound.find("MusicGame");
 
         this.world.addChild(this.player1);
 
-        this.player1.position.set(10,450);
+        this.player1.position.set(60,480);
 
         this.Truck1.position.set(1400,352);
         this.world.addChild(this.Truck1);
@@ -318,7 +318,7 @@ private sndMG = sound.find("MusicGame");
        }*/
 
 //console.log(this.Firsty,this.Lasty);
-        if(!this.isPause){
+        if(!this.isPause && !this.Loser){
             this.gameSpeed += 1.1;
             this.Score += this.gameSpeed/1000;
            // let score =  this.Score;
@@ -340,7 +340,7 @@ private sndMG = sound.find("MusicGame");
 
 
         }
-        else{
+        else if (!this.Loser){
             if(this.BoolStng){
                 if(this.TimeStng < Date.now() - 800){
                     this.T1.visible = false;
@@ -373,6 +373,7 @@ private sndMG = sound.find("MusicGame");
         
         if(this.Loser){
            // console.log("Perdiste");
+           this.gameSpeed = 0;
         }  
     }
     

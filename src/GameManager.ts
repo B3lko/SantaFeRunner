@@ -1,13 +1,13 @@
 //import { Container} from "pixi.js";
 //import { SceneMenu } from "./SceneMenu";
-//import { SceneGame } from "./SceneGame";
+import { SceneGame } from "./SceneGame";
 import { IUpdateable } from "./IUpdateable";
 import { Container } from "pixi.js";
-import { SceneMenu } from "./SceneMenu";
+//import { SceneMenu } from "./SceneMenu";
 //import { Ticker } from "pixi.js";
 
 export class GameManager extends Container implements IUpdateable{
-    public SceneActual = new SceneMenu(/*this*/);
+    public SceneActual = new SceneGame(this);
     constructor(scrwidth:number){
         super();
         scrwidth;
