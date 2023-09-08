@@ -7,8 +7,10 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "@pixi/particle-emitter": "^5.0.8",
     "@pixi/sound": "^5.2.0",
-    "pixi.js": "^7.1.2"
+    "pixi.js": "^7.1.2",
+    "tweedle.js": "^2.1.0"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",

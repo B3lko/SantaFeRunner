@@ -5,9 +5,12 @@ export const assets = {
     Sky3: "./SceneGame/Sky_layer033.png",
     Camion:"./SceneGame/Truckk.png",
     Bridge:"./SceneGame/Bridgee.png",
-
+    Beer:"./SceneGame/Beer.png",
 
     //Player
+    Death1:"./Character/Death1.png",
+    Death2:"./Character/Death2.png",
+
     Jump1:"./Character/Jump/11.png",
     Jump2:"./Character/Jump/22.png",
     Jump3:"./Character/Jump/33.png",

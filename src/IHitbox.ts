@@ -4,9 +4,9 @@ export interface IHitbox{
     getHitbox():Rectangle;
 }
 
-export function checkCollision(objA:Rectangle,objB:Rectangle):boolean{//IHitbox, objB:IHitbox):boolean{
-    const rA = objA;//.getHitbox();
-    const rB = objB;//.getHitbox();
+export function checkCollision(objA:Rectangle,objB:Rectangle):boolean{
+    const rA = objA;
+    const rB = objB;
 
     const rightmostLeft = rA.left < rB.left ? rB.left : rA.left;
     const leftmostRight = rA.right > rB.right ? rB.right : rA.right;
@@ -16,10 +16,6 @@ export function checkCollision(objA:Rectangle,objB:Rectangle):boolean{//IHitbox,
     const makesSenseHorizontal = rightmostLeft < leftmostRight;
     const makesSenseVertical = bottommostTop < topmostBottom;
 
-    if(makesSenseHorizontal && makesSenseVertical){
-return true;
-    }
-    else{
-return false;
-    }
+    if(makesSenseHorizontal && makesSenseVertical){ return true;}
+    else{ return false; }
 }

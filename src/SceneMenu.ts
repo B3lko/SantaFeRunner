@@ -1,7 +1,10 @@
 import { sound } from "@pixi/sound";
-import { Container, Sprite, Text, TextStyle, Texture, TilingSprite } from "pixi.js";
+import { Sprite, Text, TextStyle, Texture, TilingSprite } from "pixi.js";
+import { SceneBase } from "./utils/SceneBase";
+import { SceneManager } from "./utils/SceneManager";
+import { SceneGame } from "./SceneGame";
 
-export class SceneMenu extends Container{
+export class SceneMenu extends SceneBase{
     tstyle = new TextStyle({
         fontSize: 25,
         fontFamily: "Minecraft",
@@ -14,6 +17,7 @@ export class SceneMenu extends Container{
     TPlay = new Text("Play",this.tstyle);
     TExit = new Text("Exit",this.tstyle);
     TMute = new Text("Mute",this.tstyle);
+    TUnMute = new Text("UnMute",this.tstyle);
 
     BackGround1: Sprite = Sprite.from("BG1");
     SantaFe: Sprite = Sprite.from("SantaFe");
@@ -28,16 +32,18 @@ export class SceneMenu extends Container{
 
     Test: Sprite = Sprite.from("Test");
 
+    private sndMM = sound.find("MusicMenu");
+
     private BackGround0:TilingSprite = new TilingSprite(Texture.from("BG0"), 1280,720);
     private Setuval:TilingSprite = new TilingSprite(Texture.from("Setuval"), 1280,197);
     constructor(){
         super();
 
-
-        sound.play("MusicMenu",{
+        this.sndMM.play();
+        /*sound.play("MusicMenu",{
             volume: 1.0,
             loop: true,
-        });
+        });*/
        // this.addChild(this.Play);
         //this.addChild(this.title);
         
@@ -69,37 +75,39 @@ export class SceneMenu extends Container{
         this.addChild(this.Music1Menu);
         this.addChild(this.Music2Menu);
         this.Play.addChild(this.TPlay);
-        this.Music2Menu.addChild(this.TMute);
+        this.Music2Menu.addChild(this.TUnMute);
         this.Music1Menu.addChild(this.TMute);
         this.Exit.addChild(this.TExit);
         
-
-
-        //this.Play.scale.set(1.5);
         this.Play.pivot.x = (this.Play.width/2);
         this.Play.position.set(1280/2,615);
+        this.Play.interactive = true;
 
         this.Exit.pivot.x = (this.Exit.width/2);
         this.Exit.position.set(700/2,615);
 
         this.Music1Menu.pivot.x = (this.Music1Menu.width/2);
         this.Music1Menu.position.set(1860/2,615);
+        this.Music1Menu.interactive = true;
 
         this.Music2Menu.pivot.x = (this.Music2Menu.width/2);
         this.Music2Menu.position.set(1860/2,615);
         this.Music2Menu.visible = false;
+        this.Music2Menu.interactive = true;
 
         this.TPlay.position.set(5,65);
         this.TExit.position.set(5,65);
         this.TMute.position.set(5,65);
-       // this.Test.position.y = -50;
-        //this.Test.alpha = 0.25;
-       // this.Test.angle = 3;
+        this.TUnMute.position.set(-4,65);
 
         this.addChild(this.SantaFe);
 
-
         this.addChild(this.Runner);
+
+        this.Play.on("pointertap",this.onTouchStartPlay,this);
+        this.Music1Menu.on("pointertap",this.onTouchStartSndOn,this);
+        this.Music2Menu.on("pointertap",this.onTouchStartSndOff,this);
+
     }
     public update(_deltaTime:number/* ,_deltaFrame:number */){
         this.BackGround0.tilePosition.x += 0.5;
@@ -115,5 +123,22 @@ export class SceneMenu extends Container{
             this.Base.position.y -= 20;
         }
 
+    }
+
+    private onTouchStartPlay():void{
+        this.sndMM.stop();
+        SceneManager.ChangeScene(new SceneGame());
+    }
+
+    private onTouchStartSndOn():void{
+        sound.toggleMuteAll();
+        this.Music1Menu.visible = false;
+        this.Music2Menu.visible = true;
+    }
+
+    private onTouchStartSndOff():void{
+        sound.toggleMuteAll();
+        this.Music1Menu.visible = true;
+        this.Music2Menu.visible = false;
     }
 }
