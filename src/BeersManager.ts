@@ -19,6 +19,9 @@ export class BeersManager extends Container{
 
     public GenerateArray(Truck:Truck):void{
 
+        for (let i = 0; i < this.Size; i++) {
+            this.BeersArray[i].destroy();
+        }
         this.BeersArray = new Array();
         
         this.Size = Math.floor(Math.random() * (this.Max - this.Min) + this.Min);
@@ -51,6 +54,10 @@ export class BeersManager extends Container{
 
     public getPoints():number{
         return this.Points;
+    }
+
+    public setPoints(Points:number):void{
+        this.Points = Points;
     }
 
     public getPositions():Beer[]{

@@ -12,7 +12,6 @@ export const assets = {
     Death2:"./Character/Death2.png",
 
     Jump1:"./Character/Jump/11.png",
-    Jump2:"./Character/Jump/22.png",
     Jump3:"./Character/Jump/33.png",
 
     Run1:"./Character/Run/Run1.png",
@@ -44,6 +43,8 @@ export const assets = {
     ExitMenu:"./UI/ExitMenu.png",
     Music1Menu: "./UI/Music1Menu.png",
     Music2Menu: "./UI/Music2Menu.png",
+    FSOn: "./UI/FullScreenOn.png",
+    FSOff: "./UI/FullScreenOff.png",
 
 
     //Music & Sounds

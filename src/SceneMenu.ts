@@ -1,8 +1,12 @@
 import { sound } from "@pixi/sound";
+import { exit } from "@tauri-apps/api/process";
+import { appWindow } from "@tauri-apps/api/window";
 import { Sprite, Text, TextStyle, Texture, TilingSprite } from "pixi.js";
 import { SceneBase } from "./utils/SceneBase";
 import { SceneManager } from "./utils/SceneManager";
 import { SceneGame } from "./SceneGame";
+import { Capacitor } from "@capacitor/core";
+import { App } from "@capacitor/app";
 
 export class SceneMenu extends SceneBase{
     tstyle = new TextStyle({
@@ -25,12 +29,11 @@ export class SceneMenu extends SceneBase{
     By: Sprite = Sprite.from("By");
     Base: Sprite = Sprite.from("Base");
     Play: Sprite = Sprite.from("PlayMenu");
-    Exit: Sprite = Sprite.from("ExitMenu");
+    ExitButton: Sprite = Sprite.from("ExitMenu");
     Music1Menu: Sprite = Sprite.from("Music1Menu");
     Music2Menu: Sprite = Sprite.from("Music2Menu");
-    
-
-    Test: Sprite = Sprite.from("Test");
+    FSOn: Sprite = Sprite.from("FSOn");
+    FSOff: Sprite = Sprite.from("FSOff");
 
     private sndMM = sound.find("MusicMenu");
 
@@ -40,29 +43,30 @@ export class SceneMenu extends SceneBase{
         super();
 
         this.sndMM.play();
-        /*sound.play("MusicMenu",{
-            volume: 1.0,
-            loop: true,
-        });*/
-       // this.addChild(this.Play);
-        //this.addChild(this.title);
         
-        //this.SantaFe.scale.set(3.5);
         this.SantaFe.scale.set(0.9);
         this.SantaFe.position.set(25,450);
 
         this.Runner.scale.set(1.1);
         this.Runner.position.set(795,-300);
-        //this.Runner.angle = (6);
 
-        //this.Setuval.scale.set(3.5);
         this.Setuval.position.y = 350;
 
-        //this.Camion.scale.set(0.1);
         this.By.position.set(-450,30);
 
         this.Base.scale.set(0.875);
         this.Base.position.set(795,1500);
+
+        
+        this.ExitButton.pivot.x = (this.ExitButton.width/2);
+        this.ExitButton.position.set(700/2,615);
+        this.ExitButton.interactive = true;
+
+        //@ts-expect-error Tauri is injected in Tauri apps
+        if(!Capacitor.isNativePlatform() && !window.__TAURI__){
+            this.ExitButton.interactive = false;
+            this.ExitButton.visible = false;
+        }
 
         
         this.addChild(this.BackGround0);
@@ -71,20 +75,34 @@ export class SceneMenu extends SceneBase{
         this.addChild(this.BackGround1);
         this.addChild(this.Base);
         this.addChild(this.Play);
-        this.addChild(this.Exit);
+        this.addChild(this.ExitButton);
         this.addChild(this.Music1Menu);
         this.addChild(this.Music2Menu);
+        this.addChild(this.FSOff);
+        this.addChild(this.FSOn);
         this.Play.addChild(this.TPlay);
         this.Music2Menu.addChild(this.TUnMute);
         this.Music1Menu.addChild(this.TMute);
-        this.Exit.addChild(this.TExit);
+        this.ExitButton.addChild(this.TExit);
         
         this.Play.pivot.x = (this.Play.width/2);
         this.Play.position.set(1280/2,615);
         this.Play.interactive = true;
 
-        this.Exit.pivot.x = (this.Exit.width/2);
-        this.Exit.position.set(700/2,615);
+        this.FSOn.position.set(25,25);
+        this.FSOn.interactive = true;
+        this.FSOn.visible = false;
+
+        this.FSOff.position.set(25,25);
+        this.FSOff.interactive = true;
+        
+        //@ts-expect-error Tauri is injected in Tauri apps
+        if(!window.__TAURI__){
+            this.FSOn.visible = false;
+            this.FSOff.visible = false;
+            this.FSOff.interactive = false;
+            this.FSOn.interactive = false;
+        }
 
         this.Music1Menu.pivot.x = (this.Music1Menu.width/2);
         this.Music1Menu.position.set(1860/2,615);
@@ -101,12 +119,14 @@ export class SceneMenu extends SceneBase{
         this.TUnMute.position.set(-4,65);
 
         this.addChild(this.SantaFe);
-
         this.addChild(this.Runner);
 
+        this.ExitButton.on("pointertap",this.onTouchStartExit,this);
         this.Play.on("pointertap",this.onTouchStartPlay,this);
         this.Music1Menu.on("pointertap",this.onTouchStartSndOn,this);
         this.Music2Menu.on("pointertap",this.onTouchStartSndOff,this);
+        this.FSOff.on("pointertap",this.onTouchStartFSO,this);
+        this.FSOn.on("pointertap",this.onTouchStartFSO,this);
 
     }
     public update(_deltaTime:number/* ,_deltaFrame:number */){
@@ -123,6 +143,36 @@ export class SceneMenu extends SceneBase{
             this.Base.position.y -= 20;
         }
 
+    }
+
+    private async onTouchStartFSO(){
+        //@ts-expect-error Tauri is injected in Tauri apps
+        if(window.__TAURI__){
+            const isFull = await appWindow.isFullscreen();
+            if(isFull){
+                this.FSOn.visible = true;
+                this.FSOff.visible = false;
+            }
+            else{
+                this.FSOn.visible = false;
+                this.FSOff.visible = true;
+            }
+            await appWindow.setFullscreen(!isFull);
+            
+        }
+    }
+
+    private async onTouchStartExit(){
+        //@ts-expect-error Tauri is injected in Tauri apps
+        if(window.__TAURI__){
+            await exit(1);
+            this.sndMM.stop();
+        }
+        if(Capacitor.isNativePlatform()){
+            App.exitApp();
+        }
+       
+        
     }
 
     private onTouchStartPlay():void{

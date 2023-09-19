@@ -43,7 +43,7 @@ export class SceneGame extends SceneBase{
 
     private sndMG = sound.find("MusicGame");
 
-    public isPause = false;
+    
 
 
     
@@ -68,7 +68,7 @@ export class SceneGame extends SceneBase{
     T3 = new Text("3",this.tstyle);
     TLose = new Text("Continue?",this.tstyle);
     TContinue = new Text("Continue",this.tstyle);
-    Tx = new Text("X 100",this.tstyle);
+    Tx = new Text("X",this.tstyle);
     TBeers = new Text("0", this.tstyle);
 
 
@@ -78,7 +78,7 @@ export class SceneGame extends SceneBase{
     TruckUp = false;
     FreeSpace: boolean = false;
     Ready1 = false; //Perder una sola vez
-
+    public isPause = false;
 
     //----------NUMBERS----------//
     TimeStng = 0;
@@ -92,7 +92,10 @@ export class SceneGame extends SceneBase{
     PointsBeer = 0;
     Score:number = 0;
     private gameSpeed = 20;
+    gameSpeedAux: number = 0;
+    PriceBeers = 10;
 
+    
     private Stng:Container;
 
     BM1 = new BeersManager();
@@ -100,6 +103,8 @@ export class SceneGame extends SceneBase{
     constructor(){
         super();
 
+
+        this.Tx.text = "X" + this.PriceBeers;
         this.world = new Container();
         this.Stng = new Container();
 
@@ -236,6 +241,7 @@ export class SceneGame extends SceneBase{
         this.T1.pivot.x = (this.T1.width/2);
         this.T1.scale.set(0.5);
         this.T1.position.set(1280/2,550);
+        this.T1.visible = false;
 
         this.T2.pivot.x = (this.T2.width/2);
         this.T2.scale.set(0.5);
@@ -340,6 +346,7 @@ export class SceneGame extends SceneBase{
        
         if(!this.isPause && !this.Loser){
             this.gameSpeed += 1.1;
+            this.gameSpeedAux = this.gameSpeed;
             this.Score += this.gameSpeed/1000;
             this.TScore.text = "Score: " +String(Math.round(this.Score));
             this.player1.update(frame/* ,_deltaFrame */);
@@ -352,14 +359,7 @@ export class SceneGame extends SceneBase{
             this.PointsBeer = this.BM1.getPoints();
             this.TBeers.text = (this.PointsBeer);
             if(this.Truck1.position.x + this.Truck1.width < 0){
-                this.Truck1.position.x = 1280 + 1000*Math.random();
-                for (let i = 0; i < this.BM1.getPositions().length; i++){
-                    if(checkCollision(this.BM1.getPositions()[i].getBounds(),this.Truck1.getHitbox5()) ||
-                    checkCollision(this.BM1.getPositions()[i].getBounds(),this.Truck1.getHitbox6()) ||
-                    checkCollision(this.BM1.getPositions()[i].getBounds(),this.Truck1.getHitbox7())){
-                        this.Truck1.position.x += 1000;
-                    }
-                }
+                this.GenerateTruck();
             }
         }
 
@@ -384,7 +384,11 @@ export class SceneGame extends SceneBase{
                     this.isPause = false;
                     this.BoolStng = false;
                     this.Stng.visible = false;
+                    this.T1.scale.set(0.5);
+                    this.T2.scale.set(0.5);
+                    this.T3.scale.set(0.5);
                     this.player1.Cacho.play();
+                    this.Pause.interactive = true;
                 }
                 else if (this.T1.visible){this.T1.scale.set(this.T1.scale.x + 0.01,this.T1.scale.y + 0.01);}
 
@@ -402,16 +406,40 @@ export class SceneGame extends SceneBase{
                 this.Lose.addChild(this.Menu);
            })
            .start();
-           this.player1.visible = false;
-           this.Death1.visible = true;
-           this.gameSpeed = 0;
-           this.Ready1 = true;
+            this.player1.visible = false;
+            this.Death1.visible = true;
+            this.gameSpeed = 0;
+            this.Ready1 = true;
         }  
     }
 
+    private GenerateTruck():void{
+        this.Truck1.position.x = 1280 + 1000*Math.random();
+        for (let i = 0; i < this.BM1.getPositions().length; i++){
+            if(checkCollision(this.BM1.getPositions()[i].getBounds(),this.Truck1.getHitbox5()) ||
+            checkCollision(this.BM1.getPositions()[i].getBounds(),this.Truck1.getHitbox6()) ||
+            checkCollision(this.BM1.getPositions()[i].getBounds(),this.Truck1.getHitbox7())){
+                this.Truck1.position.x += 1000;
+            }
+        }
+    }
+
     private onTouchStartBeer():void{
-        if(this.PointsBeer >= 10){
-            this.PointsBeer -= 10;
+        if(this.PointsBeer >= this.PriceBeers){
+            this.PointsBeer -= this.PriceBeers;
+            this.PriceBeers *= 2;
+            this.Tx.text = "X" + this.PriceBeers;
+            this.TBeers.text = (this.PointsBeer);
+            this.BM1.setPoints(this.PointsBeer);
+            this.Loser = false;
+            this.player1.visible = true;
+            this.Death1.visible = false;
+            this.Death2.visible = false;
+            this.gameSpeed = this.gameSpeedAux;
+            this.Ready1 = false;
+            this.Lose.visible = false;
+            this.PauseW.addChild(this.Menu);
+            this.GenerateTruck();
         }
     }
     
@@ -430,15 +458,12 @@ export class SceneGame extends SceneBase{
         this.Truck1.position.x = 1400;
         this.Pause.visible = true;
         this.curtain.visible = false;
-        this.Stng.visible = true;
         this.TimeStng = Date.now();
         this.BoolStng = true;
-        this.T1.scale.set(0.5);
-        this.T2.scale.set(0.5);
-        this.T3.scale.set(0.5);
-        console.log(this.TimeStng);
         this.T3.visible = true;
-        this.T1.visible = false;
+        this.Stng.visible = true;
+        this.BM1.GenerateArray(this.Truck1);
+        this.BM1.setPoints(0);
     }
 
     private onTouchStartPause():void{
@@ -447,16 +472,18 @@ export class SceneGame extends SceneBase{
             this.PauseW.addChild(this.Menu);
             this.Pause.visible = false;
             this.curtain.visible = true;
+            this.Pause.interactive = false;
             this.player1.Cacho.stop();
         }
     }
     
     private onTouchStartPlay():void{
-        this.isPause = false;
+        this.T3.visible = true;
         this.curtain.visible = false;
-        this.Pause.interactive = true;
         this.Pause.visible = true;
-        this.player1.Cacho.play();
+        this.TimeStng = Date.now();
+        this.BoolStng = true;
+        this.Stng.visible = true;
     }
 
     private onTouchStartHome():void{
