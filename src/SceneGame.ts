@@ -8,6 +8,8 @@ import { SceneBase } from "./utils/SceneBase";
 import { SceneManager } from "./utils/SceneManager";
 import { SceneMenu } from "./SceneMenu";
 import { BeersManager } from "./BeersManager";
+import { Sign } from "./Sign";
+import { Bike } from "./Bike";
 
 export class SceneGame extends SceneBase{
     private world:Container;
@@ -17,6 +19,8 @@ export class SceneGame extends SceneBase{
     private Sky3:TilingSprite = new TilingSprite(Texture.from("Sky3"), 1280,720);
     private Bridge:TilingSprite = new TilingSprite(Texture.from("Bridge"), 1280,720);
     Truck1:Truck = new Truck();
+    Sign1:Sign = new Sign();
+    Bike1:Bike = new Bike();
     
     private curtain:Graphics;
     private PauseW: NineSlicePlane = new NineSlicePlane(
@@ -40,6 +44,7 @@ export class SceneGame extends SceneBase{
     Death2: Sprite = Sprite.from("Death2");
     Beer: Sprite = Sprite.from("Beer");
     Beer2: Sprite = Sprite.from("Beer");
+    
 
     private sndMG = sound.find("MusicGame");
 
@@ -79,6 +84,7 @@ export class SceneGame extends SceneBase{
     FreeSpace: boolean = false;
     Ready1 = false; //Perder una sola vez
     public isPause = false;
+    okayaux: Boolean = false;
 
     //----------NUMBERS----------//
     TimeStng = 0;
@@ -91,7 +97,7 @@ export class SceneGame extends SceneBase{
     private Lasty:number = 0;
     PointsBeer = 0;
     Score:number = 0;
-    private gameSpeed = 20;
+    private gameSpeed = 5;
     gameSpeedAux: number = 0;
     PriceBeers = 10;
 
@@ -131,6 +137,12 @@ export class SceneGame extends SceneBase{
 
         this.Truck1.position.set(1400,352);
         this.world.addChild(this.Truck1);
+
+        this.Sign1.position.set(600,420);
+        this.world.addChild(this.Sign1);
+
+        this.Bike1.position.set(2500,515);
+        this.world.addChild(this.Bike1);
 
         this.TScore.position.set(20,15);
 
@@ -315,17 +327,24 @@ export class SceneGame extends SceneBase{
         .start();
        }
 
-       if(checkCollision(this.player1.getHitbox(),this.Truck1.getHitbox())){
+        if(checkCollision(this.player1.getHitbox(),this.Truck1.getHitbox())){
             this.Loser = true;
-       }
+        }
+        if(checkCollision(this.player1.getHitbox(),this.Bike1.getHitbox3())){
+            this.Loser = true;
+        }
+        if(checkCollision(this.player1.getHitbox(),this.Sign1.getHitbox())){
+            this.Loser = true;
+        }
 
-       if(checkCollision(this.player1.getHitbox(),this.Truck1.getHitbox2())){
+
+        if(checkCollision(this.player1.getHitbox(),this.Truck1.getHitbox2())){
             this.player1.isDown = false;
             this.player1.isJumping = false;
             this.TruckUp = true;
             this.player1.Cacho.playState("Run");
-       }
-       else if(checkCollision(this.player1.getHitbox(),this.Truck1.getHitbox3())){
+        }
+        else if(checkCollision(this.player1.getHitbox(),this.Truck1.getHitbox3())){
             this.player1.isDown = false;
             this.player1.isJumping = false;
             this.TruckUp = true;
@@ -336,13 +355,31 @@ export class SceneGame extends SceneBase{
             this.player1.isJumping = false;
             this.TruckUp = true;
             this.player1.Cacho.playState("Run");
-       }
+        }
+        else if(checkCollision(this.player1.getHitbox(),this.Bike1.getHitbox2())){
+            this.player1.isDown = false;
+            this.player1.isJumping = false;
+            this.TruckUp = true;
+            this.player1.Cacho.playState("Run");
+        }
+        else if(this.TruckUp){
+            this.player1.isDown = true;
+            this.TruckUp = false;
+            this.player1.Cacho.playState("JumpDown");
+        }
 
-       else if(this.TruckUp){
-        this.player1.isDown = true;
-        this.TruckUp = false;
-        this.player1.Cacho.playState("JumpDown");
-       }
+       /*if(checkCollision(this.player1.getHitbox(),this.Bike1.getHitbox())){
+            this.player1.isDown = false;
+            this.player1.isJumping = false;
+            //this.TruckUp = true;
+            this.player1.Cacho.playState("Run");
+        }
+        else{
+            this.player1.isDown = true;
+            this.player1.Cacho.playState("JumpDown");
+        }*/
+       
+    
        
         if(!this.isPause && !this.Loser){
             this.gameSpeed += 1.1;
@@ -355,11 +392,19 @@ export class SceneGame extends SceneBase{
             this.Sky3.tilePosition.x -= 5 + this.gameSpeed * frame/1000;
             this.Bridge.tilePosition.x -= 9 + this.gameSpeed * frame/1000;
             this.Truck1.position.x -= 9 + this.gameSpeed * frame/1000;
+            this.Sign1.position.x -= 9 + this.gameSpeed * frame/1000;
+            this.Bike1.position.x -= 9 + this.gameSpeed * frame/1000;
             this.BM1.Update(this.player1.getHitbox(),this.Truck1, (9 + this.gameSpeed * frame/1000));
             this.PointsBeer = this.BM1.getPoints();
             this.TBeers.text = (this.PointsBeer);
             if(this.Truck1.position.x + this.Truck1.width < 0){
                 this.GenerateTruck();
+            }
+            if(this.Sign1.position.x + this.Sign1.width < 0){
+                this.GenerateSign();
+            }
+            if(this.Bike1.position.x + this.Bike1.width < 0){
+                this.GenerateBike();
             }
         }
 
@@ -414,14 +459,56 @@ export class SceneGame extends SceneBase{
     }
 
     private GenerateTruck():void{
-        this.Truck1.position.x = 1280 + 1000*Math.random();
-        for (let i = 0; i < this.BM1.getPositions().length; i++){
-            if(checkCollision(this.BM1.getPositions()[i].getBounds(),this.Truck1.getHitbox5()) ||
-            checkCollision(this.BM1.getPositions()[i].getBounds(),this.Truck1.getHitbox6()) ||
-            checkCollision(this.BM1.getPositions()[i].getBounds(),this.Truck1.getHitbox7())){
-                this.Truck1.position.x += 1000;
+        this.okayaux = false;
+        while(!this.okayaux){
+            this.Truck1.position.x = 1280 * 5000*Math.random();
+            if(checkCollision(this.Sign1.getHitbox3(),this.Truck1.getHitbox())||
+            checkCollision(this.Sign1.getHitbox3(),this.Truck1.getHitbox4()) ||
+            checkCollision(this.Bike1.getHitbox(),this.Truck1.getHitbox4()) ||
+            checkCollision(this.Bike1.getHitbox(),this.Truck1.getHitbox())){
+                this.okayaux = false;  
+            }
+            else{
+                this.okayaux = true;
             }
         }
+        console.log("Sali del camion");
+    }
+
+    private GenerateSign():void{
+        this.okayaux = false;
+        while(!this.okayaux){
+            this.Sign1.position.x = 1280 + 5000*Math.random();
+            if(checkCollision(this.Sign1.getHitbox3(),this.Truck1.getHitbox())||
+            checkCollision(this.Sign1.getHitbox3(),this.Truck1.getHitbox4()) ||
+            checkCollision(this.Sign1.getHitbox3(),this.Bike1.getHitbox())
+            ){
+                this.okayaux = false;
+            }
+            else{
+                this.okayaux = true;
+            }
+        }
+        console.log("Sali del cartel");
+    }
+
+    private GenerateBike():void{
+        this.okayaux = false;
+        while(!this.okayaux){
+            this.Bike1.position.x = 1280 + 5000*Math.random();
+            if(
+            checkCollision(this.Bike1.getHitbox(),this.Truck1.getHitbox())||
+            checkCollision(this.Bike1.getHitbox(),this.Truck1.getHitbox4()) ||
+            checkCollision(this.Bike1.getHitbox(),this.Sign1.getHitbox3())
+            )
+            {
+                this.okayaux = false;
+            }
+            else{
+                this.okayaux = true;
+            }
+        }
+        console.log("Sali de la bivci");
     }
 
     private onTouchStartBeer():void{
@@ -440,11 +527,13 @@ export class SceneGame extends SceneBase{
             this.Lose.visible = false;
             this.PauseW.addChild(this.Menu);
             this.GenerateTruck();
+            this.GenerateBike();
+            this.GenerateSign();
         }
     }
     
     private onTouchStartRetry():void{
-        this.gameSpeed = 20;
+        this.gameSpeed = 10;
         this.Score = 0;
         this.PointsBeer = 0;
         if(this.player1.isJumping || this.player1.isDown || this.player1.isRolling){
@@ -455,7 +544,10 @@ export class SceneGame extends SceneBase{
         this.player1.position.y = 480;
         this.player1.Cacho.playState("Run");
         this.player1.Cacho.stop();
-        this.Truck1.position.x = 1400;
+        //this.Truck1.position.x = 1400;
+        this.GenerateTruck();
+        this.GenerateBike();
+        this.GenerateSign();
         this.Pause.visible = true;
         this.curtain.visible = false;
         this.TimeStng = Date.now();

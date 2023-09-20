@@ -16,19 +16,39 @@ export class Player extends Container{
     gameSpeed = 20;
 
     scrollStart: number = 0;
-    scrollDurationMS :number= 200;
-    public hitbox:Graphics;
+    scrollDurationMS :number = 2500;
+    public hitbox:Graphics = new Graphics();
+    public hitboxRolling:Graphics;
+    public hitboxNormal:Graphics;
+
 
     constructor(){
         super();
 
         //HitBox
-        this.hitbox = new Graphics;
-        this.hitbox.beginFill(0xFF00FF,0.3);
-        this.hitbox.drawRect(48+16,48,96-16-16-8,96+16);
-        this.hitbox.endFill();
-        this.addChild(this.hitbox);
+        this.hitboxNormal = new Graphics;
+        this.hitboxNormal.beginFill(0xFF0000,0.3);
+        this.hitboxNormal.drawRect(64,48,56,112);
+        this.hitboxNormal.endFill();
+        //this.addChild(this.hitboxNormal);
+        this.hitboxNormal.visible = false;
+
+        this.hitboxRolling = new Graphics;
+        this.hitboxRolling.beginFill(0x0000FF,0.3);
+        this.hitboxRolling.drawRect(64,80,56,64);
+        this.hitboxRolling.endFill();
+        this.hitboxRolling.visible = false;
+       // this.addChild(this.hitboxRolling);
         this.hitbox.visible = false;
+
+        //this.hitbox = this.hitboxNormal;
+        this.hitbox = new Graphics();
+        this.hitbox = this.hitboxNormal.clone();
+        this.hitbox.visible = false;
+        this.addChild(this.hitbox);
+        
+        //this.hitbox.clear;
+        //this.hitbox = this.hitboxNormal;
 
         //Animations
         this.Cacho = new StateAnimation();
@@ -59,8 +79,14 @@ export class Player extends Container{
     }
 
     public update(_deltaTime:number){
+
+
+
         this.Cacho.update(_deltaTime);
         this.gameSpeed +=1.1;
+
+        //if(!this.isRolling)
+       // this.scrollDurationMS += this.gameSpeed * 0.01;
 
         if(this.isJumping){this.jump();}
 
@@ -73,6 +99,14 @@ export class Player extends Container{
         if(this.isRolling && this.scrollStart < Date.now() - this.scrollDurationMS){ 
             this.isRolling = false;
             this.Cacho.playState("Run");
+
+            
+            this.hitbox.destroy();
+            this.hitbox = new Graphics();
+            this.hitbox = this.hitboxNormal.clone();
+            this.removeChild(this.hitbox);
+            this.addChild(this.hitbox);
+            this.hitbox.visible = false;
         }
 
         if(this.isDown){this.down();}
@@ -89,6 +123,13 @@ export class Player extends Container{
             this.Cacho.playState("Roll");
             this.isRolling = true;
             this.scrollStart = Date.now();
+
+            this.hitbox.destroy();
+            this.hitbox = new Graphics();
+            this.hitbox = this.hitboxRolling.clone();
+            this.removeChild(this.hitbox);
+            this.addChild(this.hitbox);
+            this.hitbox.visible = false;
         }
     }
 

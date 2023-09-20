@@ -72,7 +72,15 @@ export class BeersManager extends Container{
 
         for (let i = 0; i < this.BeersArray.length; i++){
 
-            if(checkCollision(this.BeersArray[i].getHitbox(),Player1) && !this.BeersArray[i].getState()){
+            if(this.BeersArray[i] != null){
+           if(this.BeersArray[i].getVisible() && this.BeersArray[i] != null){
+                if(this.BeersArray[i].position.x <= -80){
+                    this.BeersArray[i].setVisible(false);
+                console.log("Me fui");
+                }
+                
+            }
+           if(checkCollision(this.BeersArray[i].getHitbox(),Player1) && !this.BeersArray[i].getState()){
                 this.BeersArray[i].setState(true);
                 new Tween(this.BeersArray[i])
                  .to({x:500, y:10}, 1500)
@@ -82,11 +90,8 @@ export class BeersManager extends Container{
                  })
                 .start();
             }
-
-            if(this.BeersArray[i].position.x <= -50 * GameSpeed && !this.BeersArray[i].getState()){
-                this.BeersArray[i].setVisible(false);
-            }  
-
+              
+        }
         }
         
         for (let i = 0; i < this.BeersArray.length; i++) {
