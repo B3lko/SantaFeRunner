@@ -9,6 +9,7 @@ export class Player extends Container{
     isJumping = false;
     isDown = false;
     isRolling = false;
+    walkingObject = false;
     XLR8 = 0.01;
     Speed2 = 0;
     floor = 480;
@@ -16,7 +17,7 @@ export class Player extends Container{
     gameSpeed = 20;
 
     scrollStart: number = 0;
-    scrollDurationMS :number = 2500;
+    scrollDurationMS :number = 1000;
     public hitbox:Graphics = new Graphics();
     public hitboxRolling:Graphics;
     public hitboxNormal:Graphics;
@@ -77,16 +78,14 @@ export class Player extends Container{
         this.addChild(this.Cacho);
         this.Cacho.playState("Run");
     }
+    
+    public setGS(GS:number):void{
+        this.gameSpeed = GS;
+    }
 
     public update(_deltaTime:number){
 
-
-
         this.Cacho.update(_deltaTime);
-        this.gameSpeed +=1.1;
-
-        //if(!this.isRolling)
-       // this.scrollDurationMS += this.gameSpeed * 0.01;
 
         if(this.isJumping){this.jump();}
 
@@ -98,7 +97,10 @@ export class Player extends Container{
 
         if(this.isRolling && this.scrollStart < Date.now() - this.scrollDurationMS){ 
             this.isRolling = false;
-            this.Cacho.playState("Run");
+            if(!this.isJumping && !this.isDown){
+                this.Cacho.playState("Run");
+            }
+           
 
             
             this.hitbox.destroy();
@@ -133,8 +135,8 @@ export class Player extends Container{
         }
     }
 
-    public onTouchStart():void{
-        if(!this.isJumping && !this.isRolling && !this.isDown){
+    public JumpStart():void{
+        if(!this.isJumping &&  !this.isDown){
             this.Speed2 = this.jumpspeed;
             this.isJumping = true;
             this.Cacho.playState("JumpUp");

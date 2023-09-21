@@ -16,7 +16,7 @@ export class Bike extends Container{
 
         this.hitbox2 = new Graphics;
         this.hitbox2.beginFill(0x00FFFF,0.3);
-        this.hitbox2.drawRect(0,0,this.SBike.width,20);
+        this.hitbox2.drawRect(0,20,this.SBike.width,20);
         this.hitbox2.endFill();
         this.hitbox2.visible = false;
 

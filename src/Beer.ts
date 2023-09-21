@@ -3,9 +3,8 @@ import { Container, Graphics, Rectangle, Sprite } from "pixi.js";
 export class Beer extends Container{
 
     BeerSPT: Sprite = Sprite.from("Beer");
-    Ready: boolean = false;
+    used: boolean = false;
     hitbox: Graphics = new Graphics;
-    Visible: boolean = true;
 
     constructor(){
         super();
@@ -24,20 +23,14 @@ export class Beer extends Container{
     }
 
     public setState(State:boolean):void{
-        this.Ready = State;
-    }
-
-    public getVisible():Boolean{
-        return  this.Visible;
+        this.used = State;
     }
 
     public setVisible(Visible:boolean):void{
         this.BeerSPT.visible = Visible;
-        this.hitbox.visible = Visible;
-        this.Visible = Visible;
     }
 
     public getState():boolean{
-        return this.Ready;
+        return this.used;
     }
 }
