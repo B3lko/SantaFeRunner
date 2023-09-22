@@ -7,6 +7,7 @@ import { SceneManager } from "./utils/SceneManager";
 import { SceneGame } from "./SceneGame";
 import { Capacitor } from "@capacitor/core";
 import { App } from "@capacitor/app";
+import { Tween } from "tweedle.js";
 
 export class SceneMenu extends SceneBase{
     tstyle = new TextStyle({
@@ -48,11 +49,11 @@ export class SceneMenu extends SceneBase{
         this.SantaFe.position.set(25,450);
 
         this.Runner.scale.set(1.1);
-        this.Runner.position.set(795,-300);
+        this.Runner.position.set(795,-this.Runner.height);
 
         this.Setuval.position.y = 350;
 
-        this.By.position.set(-450,30);
+        this.By.position.set(-this.By.width,30);
 
         this.Base.scale.set(0.875);
         this.Base.position.set(795,1500);
@@ -121,6 +122,7 @@ export class SceneMenu extends SceneBase{
         this.addChild(this.SantaFe);
         this.addChild(this.Runner);
 
+        //Se asocia tocar el boton con su correspondinte funcion
         this.ExitButton.on("pointertap",this.onTouchStartExit,this);
         this.Play.on("pointertap",this.onTouchStartPlay,this);
         this.Music1Menu.on("pointertap",this.onTouchStartSndOn,this);
@@ -128,21 +130,27 @@ export class SceneMenu extends SceneBase{
         this.FSOff.on("pointertap",this.onTouchStartFSO,this);
         this.FSOn.on("pointertap",this.onTouchStartFSO,this);
 
+        //Tween del avioncito
+        new Tween(this.By)
+        .to({x:1400, y:30}, 30000)
+        .delay(5000)
+        .repeat(Infinity)
+        .start();
+
+        //Tween de "Runner"
+        new Tween(this.Runner)
+        .to({x:this.Runner.x, y:446}, 2000)
+        .start();
+
+        //Tween de la base de Runner
+        new Tween(this.Base)
+        .to({x:this.Base.x, y:500}, 3000)
+        .start();    
     }
+
     public update(_deltaTime:number/* ,_deltaFrame:number */){
-        this.BackGround0.tilePosition.x += 0.5;
-        this.Setuval.tilePosition.x += 0.5;
-        this.By.x += 2.3;
-        if(this.By.x > 1400) this.By.x = -450;
-
-        if(this.Runner.y < 440){
-            this.Runner.position.y += 20;
-        }
-        
-        if(this.Base.y >= 510){
-            this.Base.position.y -= 20;
-        }
-
+        this.BackGround0.tilePosition.x += 0.2;
+        this.Setuval.tilePosition.x += 0.2;
     }
 
     private async onTouchStartFSO(){
@@ -158,7 +166,6 @@ export class SceneMenu extends SceneBase{
                 this.FSOff.visible = true;
             }
             await appWindow.setFullscreen(!isFull);
-            
         }
     }
 
@@ -171,8 +178,6 @@ export class SceneMenu extends SceneBase{
         if(Capacitor.isNativePlatform()){
             App.exitApp();
         }
-       
-        
     }
 
     private onTouchStartPlay():void{

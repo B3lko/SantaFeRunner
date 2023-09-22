@@ -6,7 +6,7 @@ export const assets = {
     Camion:"./SceneGame/Truckk.png",
     Bridge:"./SceneGame/Bridgee.png",
     Beer:"./SceneGame/Beer.png",
-    Sign:"./SceneGame/Sign5.png",
+    Sign:"./SceneGame/Sign6.png",
     Bike:"./SceneGame/Bike.png",
 
     //Player

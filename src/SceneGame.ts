@@ -98,7 +98,9 @@ export class SceneGame extends SceneBase{
     PointsBeer = 0;
     Score:number = 0;
     private gameSpeed = 1;
-    BridgeVelocity = 5;
+    BridgeVelocity = 6;
+    cloud1Velocity = this.BridgeVelocity / 2;
+    cloud2Velocity = this.BridgeVelocity / 4;
     gameSpeedAux: number = 0;
     PriceBeers = 10;
 
@@ -140,7 +142,7 @@ export class SceneGame extends SceneBase{
         this.Truck1.position.set(-400,352);
         this.world.addChild(this.Truck1);
 
-        this.Sign1.position.set(600,420);
+        this.Sign1.position.set(600,125);
         this.GenerateSign();
         this.world.addChild(this.Sign1);
 
@@ -368,8 +370,8 @@ export class SceneGame extends SceneBase{
             this.player1.update(frame/* ,_deltaFrame */);
 
             this.Sky1.tilePosition.x -= this.gameSpeed * frame/1000;
-            this.Sky2.tilePosition.x -= 2 + this.gameSpeed * frame/1000;
-            this.Sky3.tilePosition.x -= 5 + this.gameSpeed * frame/1000;
+            this.Sky2.tilePosition.x -= this.cloud2Velocity + this.gameSpeed * frame/1000;
+            this.Sky3.tilePosition.x -= this.cloud1Velocity + this.gameSpeed * frame/1000;
             this.Bridge.tilePosition.x -= this.BridgeVelocity + this.gameSpeed * frame/1000;
             this.Truck1.position.x -= this.BridgeVelocity + this.gameSpeed * frame/1000;
             this.Sign1.position.x -= this.BridgeVelocity + this.gameSpeed * frame/1000;

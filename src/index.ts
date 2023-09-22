@@ -18,12 +18,12 @@ if(Capacitor.isNativePlatform()){
     KeepAwake.keepAwake();
     App.addListener("appStateChange", (e) => {
         if(e.isActive){
-            //esumo el juego
-            sound.play
+            //Reanudar el juego
+            sound.play;
         }
         else{
-//pauso el juego
-sound.pause;
+            //Pausar el juego
+            sound.pause;
         }
     });
 }
