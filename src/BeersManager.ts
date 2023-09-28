@@ -4,6 +4,7 @@ import { checkCollision } from "./IHitbox";
 import { Tween } from "tweedle.js";
 import { Truck } from "./Truck";
 import { Bike } from "./Bike";
+import { sound } from "@pixi/sound";
 
 export class BeersManager extends Container{
 
@@ -13,6 +14,7 @@ export class BeersManager extends Container{
     Size:number = 0;
     aux:boolean = false;
     BeersArray: Beer[] = [];
+    private SFXPickUp = sound.find("SFXPickUp");
 
     constructor(){
         super();
@@ -83,6 +85,10 @@ export class BeersManager extends Container{
 
             if(checkCollision(this.BeersArray[i].getHitbox(),Player1) && !this.BeersArray[i].getState()){
                 this.BeersArray[i].setState(true);
+                this.SFXPickUp.play({
+                    speed:0.5,
+                    volume:0.5,
+                    singleInstance:true});
                 new Tween(this.BeersArray[i])
                 .to({x:500, y:10}, 500)
                 .onComplete(()=>{

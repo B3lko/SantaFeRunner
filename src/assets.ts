@@ -8,6 +8,10 @@ export const assets = {
     Beer:"./SceneGame/Beer.png",
     Sign:"./SceneGame/Sign6.png",
     Bike:"./SceneGame/Bike.png",
+    DustP:"./Particles/CartoonSmoke.png",
+    SmokeP:"./Particles/smokeparticle.png",
+    
+
 
     //Player
     Death1:"./Character/Death1.png",
@@ -52,15 +56,24 @@ export const assets = {
     //Music & Sounds
     MusicGame:"./Music/Soy_sabalero_8Bits.mp3",
     MusicMenu:"./Music/Dame_un_beso_8Bits.mp3",
+    Ring:"./Music/RingRing.mp3",
+    SFXPickUp:"./Music/Retro PickUp Coin 04.wav",
+    SFXDown:"./Music/Retro Descending Short 20.wav",
+    BeerOpen:"./Music/BeerOpen.mp3",
+    SFXUp:"./Music/JumpUp.mp3",
+    SFXPlane:"./Music/engineCircular_004.ogg",
+    SFXImpact:"./Music/impactSoft_medium_001.ogg",
+    SFXImpact2:"./Music/impactWood_medium_004.ogg",
+    
+    
 
 
     //Fonts
     Minecraft:"./Fonts/Minecraft.ttf",
 
-
     //SceneMenu
     BG0: "./SceneMenu/SkyMenu.png",
-    BG1: "./SceneMenu/Bridge.png",
+    BG1: "./SceneMenu/BridgeV5.png",
     By: "./SceneMenu/By.png",
     SantaFe: "./SceneMenu/SantaFe.png",
     Runner: "./SceneMenu/Runner.png",

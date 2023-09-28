@@ -9,9 +9,17 @@ export class LoaderScene extends SceneBase{
     public override update(_deltaFrame: number, _deltaTime?: number | undefined): void {}
 
     public bar: Graphics;
+    public BG: Graphics;
 
     constructor(){
         super();
+
+        this.BG = new Graphics();
+        this.BG.beginFill(0x0000000);
+        this.BG.drawRect(0,0,SceneManager.WIDTH,SceneManager.HEIGTH);
+        this.BG.endFill();
+        this.addChild(this.BG);
+
         this.bar = new Graphics();
         this.setBarPercent(0);
         this.bar.pivot.x = this.bar.width / 2;
@@ -23,10 +31,10 @@ export class LoaderScene extends SceneBase{
         this.downAssets();
     }
 
-    private downAssets(){
+    private async downAssets(){
         Assets.addBundle("myAssets", assets); 
         Assets.loadBundle(["myAssets"]).then(this.whenLoadFinished.bind(this));
-        //await Assets.loadBundle(bundleIds, this.setBarPercent.bind(this));
+        await Assets.loadBundle(["myAssets"], this.setBarPercent.bind(this));
     }
 
     private setBarPercent(percent:number){

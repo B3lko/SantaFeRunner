@@ -37,6 +37,7 @@ export class SceneMenu extends SceneBase{
     FSOff: Sprite = Sprite.from("FSOff");
 
     private sndMM = sound.find("MusicMenu");
+    private SFXPlane = sound.find("SFXPlane");
 
     private BackGround0:TilingSprite = new TilingSprite(Texture.from("BG0"), 1280,720);
     private Setuval:TilingSprite = new TilingSprite(Texture.from("Setuval"), 1280,197);
@@ -97,6 +98,12 @@ export class SceneMenu extends SceneBase{
         this.FSOff.position.set(25,25);
         this.FSOff.interactive = true;
         
+        this.SFXPlane.play({
+            loop:true,
+            singleInstance:true,
+            volume:0.02
+        })
+
         //@ts-expect-error Tauri is injected in Tauri apps
         if(!window.__TAURI__){
             this.FSOn.visible = false;
@@ -111,8 +118,16 @@ export class SceneMenu extends SceneBase{
 
         this.Music2Menu.pivot.x = (this.Music2Menu.width/2);
         this.Music2Menu.position.set(1860/2,615);
-        this.Music2Menu.visible = false;
+        //this.Music2Menu.visible = false;
         this.Music2Menu.interactive = true;
+
+
+        if(sound.volumeAll == 1){
+            this.Music2Menu.visible = false;
+        }
+        else if (sound.volumeAll == 0){
+            this.Music1Menu.visible = false;
+        }
 
         this.TPlay.position.set(5,65);
         this.TExit.position.set(5,65);
@@ -182,17 +197,18 @@ export class SceneMenu extends SceneBase{
 
     private onTouchStartPlay():void{
         this.sndMM.stop();
+        this.SFXPlane.stop();
         SceneManager.ChangeScene(new SceneGame());
     }
 
     private onTouchStartSndOn():void{
-        sound.toggleMuteAll();
+        sound.volumeAll = 0;
         this.Music1Menu.visible = false;
         this.Music2Menu.visible = true;
     }
 
     private onTouchStartSndOff():void{
-        sound.toggleMuteAll();
+        sound.volumeAll = 1;
         this.Music1Menu.visible = true;
         this.Music2Menu.visible = false;
     }

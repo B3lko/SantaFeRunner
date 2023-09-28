@@ -1,4 +1,4 @@
-import { Container, TextStyle, Texture, TilingSprite, Text, Sprite, NineSlicePlane, Graphics, /*BlurFilter, Rectangle*/} from "pixi.js";
+import { Container, TextStyle, Texture, TilingSprite, Text, Sprite, NineSlicePlane, Graphics, BlurFilter/*, Rectangle*/} from "pixi.js";
 import { Player } from "./Player";
 import { Truck } from "./Truck";
 import { checkCollision } from "./IHitbox";
@@ -10,6 +10,9 @@ import { SceneMenu } from "./SceneMenu";
 import { BeersManager } from "./BeersManager";
 import { Sign } from "./Sign";
 import { Bike } from "./Bike";
+import * as DustParticle from "./emitterDust.json";
+import * as SmokeParticle from "./emitterSmoke.json";
+import { Emitter, upgradeConfig } from "@pixi/particle-emitter";
 
 export class SceneGame extends SceneBase{
     private world:Container;
@@ -45,9 +48,16 @@ export class SceneGame extends SceneBase{
     Beer: Sprite = Sprite.from("Beer");
     Beer2: Sprite = Sprite.from("Beer");
     
-
+    //------------Sounds_&_Music------------//
     private sndMG = sound.find("MusicGame");
-
+    private Ring = sound.find("Ring");
+    private BeerOpen = sound.find("BeerOpen");
+    private SFXDown = sound.find("SFXDown");
+    private SFXImpact = sound.find("SFXImpact");
+    private SFXImpact2 = sound.find("SFXImpact2");
+    
+    
+    
     
 
 
@@ -85,6 +95,7 @@ export class SceneGame extends SceneBase{
     Ready1 = false; //Perder una sola vez
     public isPause = false;
     okayaux: Boolean = false;
+    //isIdle: boolean = true;
 
     //----------NUMBERS----------//
     TimeStng = 0;
@@ -109,24 +120,24 @@ export class SceneGame extends SceneBase{
 
     BM1 = new BeersManager();
 
+    private Dust: Emitter;
+    private Smoke: Emitter;
+    curtain2: Graphics;
+
     constructor(){
         super();
 
+       
 
         this.Tx.text = "X" + this.PriceBeers;
         this.world = new Container();
         this.Stng = new Container();
 
-        //const sndMG = sound.find("MusicGame");
-        this.sndMG.volume = 1.0;
-        this.sndMG.loop = true;
-        //sndMG.speed = 0.5;
-        this.sndMG.singleInstance = true;
         sound.play("MusicGame",{
-            volume: 1.1,
+            volume: 0.35,
             loop: true,
+            singleInstance:true
         });
-
 
         this.world = new Container();
         this.world.addChild(this.Sky1);
@@ -162,6 +173,9 @@ export class SceneGame extends SceneBase{
         
         this.PauseW.addChild(this.SndOff);
         this.SndOff.position.set(10,10);
+
+        
+
 
         this.PauseW.addChild(this.SndOn);
 
@@ -206,19 +220,45 @@ export class SceneGame extends SceneBase{
         this.world.addChild(this.BM1);
         this.BM1.GenerateArray(this.Truck1, this.Bike1);
 
-        
+        this.curtain2 = new Graphics;
+        this.curtain2.beginFill(0x000000,0.7);
+        this.curtain2.drawRect(0,0,1280,720);
+        this.curtain2.endFill();
+        this.curtain2.visible = false;
 
+        //const BlurF = new BlurFilter();
+        //this.PauseW.filters = [new BlurFilter];
+        //this.world.filters = [new BlurFilter];
+        
         this.curtain = new Graphics;
         this.curtain.beginFill(0x000000,0.7);
         this.curtain.drawRect(0,0,1280,720);
         this.curtain.endFill();
 
+
+        //------------Particles------------//
+        this.Dust = new Emitter(this.world, upgradeConfig(DustParticle, Texture.from("DustP")));
+        this.Dust.spawnPos.set(this.player1.position.x,this.player1.position.y + 150);
+        this.Dust.emit = false;
+
+        this.Smoke = new Emitter(this.Truck1, upgradeConfig(SmokeParticle, Texture.from("SmokeP")));
+        this.Smoke.spawnPos.set(0,230);
+        this.Smoke.emit = true;
+
+        
         this.curtain.visible = false;
-
+        
         this.curtain.addChild(this.PauseW);
-        this.world.addChild(this.curtain);
-        this.addChild(this.world);
+        this.curtain2.filters = [new BlurFilter];
 
+        
+
+        //this.world.addChild(this.curtain);
+        
+
+        
+        this.addChild(this.world);
+        this.addChild(this.curtain);
         
 
 
@@ -240,7 +280,16 @@ export class SceneGame extends SceneBase{
 
         this.SndOff.on("pointertap",this.onTouchStartSndOff,this);
         this.SndOff.interactive = true;
-        this.SndOff.visible = false;
+
+        //console.log(sound.);
+        
+        if(sound.volumeAll == 1){
+            this.SndOff.visible = false;
+        }
+        else if (sound.volumeAll == 0){
+            this.SndOn.visible = false;
+        }
+        
 
         this.Beer2.on("pointertap",this.onTouchStartBeer,this);
         this.Beer2.interactive = true;
@@ -253,22 +302,23 @@ export class SceneGame extends SceneBase{
         this.Stng.visible = false;
 
         this.TStarting.pivot.x = (this.TStarting.width/2);
+        this.TStarting.pivot.y = (this.TStarting.height/2);
         this.TStarting.scale.set(0.75);
-        this.TStarting.position.set(1280/2,500);
+        this.TStarting.position.set(SceneManager.WIDTH/2,SceneManager.HEIGTH/2);
 
         this.T1.pivot.x = (this.T1.width/2);
         this.T1.scale.set(0.5);
-        this.T1.position.set(1280/2,550);
+        this.T1.position.set(this.TStarting.x,this.TStarting.y + 35);
         this.T1.visible = false;
 
         this.T2.pivot.x = (this.T2.width/2);
         this.T2.scale.set(0.5);
-        this.T2.position.set(1280/2,550);
+        this.T2.position.set(this.TStarting.x,this.TStarting.y + 35);
         this.T2.visible = false;
 
         this.T3.pivot.x = (this.T3.width/2);
         this.T3.scale.set(0.5);
-        this.T3.position.set(1280/2,550);
+        this.T3.position.set(this.TStarting.x,this.TStarting.y + 35);
         this.T3.visible = false;
 
 
@@ -302,13 +352,16 @@ export class SceneGame extends SceneBase{
         this.addChild(this.Death1);
         this.Death1.visible = false;
 
-        this.addChild(this.Death2);
+        this.world.addChild(this.Death2);
         this.Death2.visible = false;
         this.Death2.position.set(10,540);
-
+        this.world.addChild(this.curtain2);
 
         //Activamos que la escena sea interactiva para poder hacer los slides
         this.interactive = true;
+        /*if(this.isIdle){
+            this.on("pointerdown",this.setIdle,this);
+        }*/
         this.on("pointerdown",(e)=>{ this.Firsty = e.data.global.y; }); //Obtenemos el punto en y inicial
         this.on("pointerup",(e)=>{ //Cuando se suelta nos fijamos si y esta arriba o abajo del punto inicial
             this.Lasty = e.data.global.y;
@@ -319,18 +372,18 @@ export class SceneGame extends SceneBase{
                 this.player1.fRoll();
             }
         });
-
-
     }
+
+    /*public setIdle():void{
+        this.isIdle = false;
+    }*/
 
 
     public update(frame:number, _deltaMS:number ){
 
-       if(checkCollision(this.player1.getHitbox(),this.Beer.getBounds())){
-        new Tween(this.Beer)
-        .to({scale:{x:500,y:10}},2000)
-        .start();
-       }
+        //Se actualizan las particulas
+        this.Dust.update(_deltaMS/1000);
+        this.Smoke.update(_deltaMS/1000);
 
         if(checkCollision(this.player1.getHitbox(),this.Truck1.getHitbox())){
             this.Loser = true;
@@ -353,6 +406,7 @@ export class SceneGame extends SceneBase{
             this.doRun();
         }
         else if(checkCollision(this.player1.getHitbox(),this.Bike1.getHitbox2())){
+            this.Ring.play({singleInstance:true});
             this.doRun();
         }
         else if(this.TruckUp && !this.player1.isJumping){
@@ -361,7 +415,7 @@ export class SceneGame extends SceneBase{
             this.player1.Cacho.playState("JumpDown");
         }
        
-        if(!this.isPause && !this.Loser){
+        if(!this.isPause && !this.Loser/* && !this.isIdle*/){
             this.gameSpeed += 0.5;
             this.gameSpeedAux = this.gameSpeed;
             this.player1.setGS(this.gameSpeed);
@@ -417,6 +471,8 @@ export class SceneGame extends SceneBase{
                     this.T3.scale.set(0.5);
                     this.player1.Cacho.play();
                     this.Pause.interactive = true;
+                    this.curtain2.visible = false;
+                    this.world.filters?.pop();
                 }
                 else if (this.T1.visible){this.T1.scale.set(this.T1.scale.x + 0.01,this.T1.scale.y + 0.01);}
 
@@ -425,13 +481,24 @@ export class SceneGame extends SceneBase{
         
         if(this.Loser && !this.Ready1){
            this.Death1.position.set(this.player1.position.x,this.player1.position.y-20);
+           this.SFXDown.play({speed:1.2});
            new Tween(this.Death1)
-           .to({x:10, y:560} ,1500)
+           .to({x:10, y:530} ,1500)
            .onComplete(()=>{
                 this.Death1.visible = false;
                 this.Death2.visible = true;
+                this.Death2.y -= 25; 
                 this.Lose.visible = true;
                 this.Lose.addChild(this.Menu);
+                this.Dust.emitNow();
+                this.world.filters = [new BlurFilter];
+                this.curtain2.visible = true;
+                this.SFXImpact.play({
+                    volume:4
+                });
+                this.SFXImpact2.play({
+                    volume:4
+                });
            })
            .start();
             this.player1.visible = false;
@@ -513,6 +580,7 @@ export class SceneGame extends SceneBase{
             this.player1.visible = true;
             this.Death1.visible = false;
             this.Death2.visible = false;
+            this.Death2.y += 25; 
             this.gameSpeed = this.gameSpeedAux;
             this.Ready1 = false;
             this.Lose.visible = false;
@@ -520,7 +588,9 @@ export class SceneGame extends SceneBase{
             this.GenerateTruck();
             this.GenerateBike();
             this.GenerateSign();
-            
+            this.BeerOpen.play();
+            this.curtain2.visible = false;
+            this.world.filters?.pop();
         }
     }
     
@@ -530,6 +600,7 @@ export class SceneGame extends SceneBase{
 
     private onTouchStartPause():void{
         if(!this.Loser){
+            this.world.filters = [new BlurFilter];
             this.isPause = true;
             this.PauseW.addChild(this.Menu);
             this.Pause.visible = false;
@@ -546,6 +617,7 @@ export class SceneGame extends SceneBase{
         this.TimeStng = Date.now();
         this.BoolStng = true;
         this.Stng.visible = true;
+        this.curtain2.visible = true;
     }
 
     private onTouchStartHome():void{
@@ -554,13 +626,13 @@ export class SceneGame extends SceneBase{
     }
 
     private onTouchStartSndOn():void{
-        sound.toggleMuteAll();
+        sound.volumeAll = 0;
         this.SndOn.visible = false;
         this.SndOff.visible = true;
     }
 
     private onTouchStartSndOff():void{
-        sound.toggleMuteAll();
+        sound.volumeAll = 1;
         this.SndOn.visible = true;
         this.SndOff.visible = false;
     }
