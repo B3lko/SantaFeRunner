@@ -20,6 +20,16 @@ export class BeersManager extends Container{
         super();
     }
 
+    //Esta funcion se usa cuando el jugador decide seguir jugando luego de perder
+    //Y al desaparecer los obtaculos las cervezas deben bajar si estaban arriba
+    public relocationDead(){
+        for (let i = 0; i < this.BeersArray.length; i++) {
+            if(!this.BeersArray[i].getState() && this.BeersArray[i].y != 552){
+                this.BeersArray[i].y = 552;
+            }
+        }
+    }
+
     public relocationArray(Truck:Truck, Bike:Bike):void{
         for (let i = 0; i < this.BeersArray.length; i++) {
             if(checkCollision(this.BeersArray[i].getBounds(),Truck.getHitbox5())){
@@ -75,7 +85,7 @@ export class BeersManager extends Container{
     public Update(Player1:Rectangle, Truck:Truck,GameSpeed:number, Bike:Bike):void{
         for (let i = 0; i < this.BeersArray.length; i++){
             
-            
+            //Si las cervezas salieron de pantalla se las marca como usadas
             if(this.BeersArray[i] != null && !this.BeersArray[i].getState()){
                 this.BeersArray[i].position.x -= GameSpeed;
                 if(this.BeersArray[i].position.x <= -80){
@@ -83,6 +93,7 @@ export class BeersManager extends Container{
                 }
             }
 
+             //Si las cervezas volisionaron con el jugador se las marca como usadas
             if(checkCollision(this.BeersArray[i].getHitbox(),Player1) && !this.BeersArray[i].getState()){
                 this.BeersArray[i].setState(true);
                 this.SFXPickUp.play({

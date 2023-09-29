@@ -44,6 +44,7 @@ export class SceneMenu extends SceneBase{
     constructor(){
         super();
 
+        this.sndMM.loop = true;
         this.sndMM.play();
         
         this.SantaFe.scale.set(0.9);
@@ -57,7 +58,7 @@ export class SceneMenu extends SceneBase{
         this.By.position.set(-this.By.width,30);
 
         this.Base.scale.set(0.875);
-        this.Base.position.set(795,1500);
+        this.Base.position.set(2000,1500);
 
         
         this.ExitButton.pivot.x = (this.ExitButton.width/2);
@@ -159,7 +160,7 @@ export class SceneMenu extends SceneBase{
 
         //Tween de la base de Runner
         new Tween(this.Base)
-        .to({x:this.Base.x, y:500}, 3000)
+        .to({x:795, y:500}, 2000)
         .start();    
     }
 

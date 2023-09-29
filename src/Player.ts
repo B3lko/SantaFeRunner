@@ -1,8 +1,6 @@
 import { Container, Graphics, Rectangle, Texture } from "pixi.js";
 import { StateAnimation } from "./StateAnimation";
 import { sound } from "@pixi/sound";
-//import { Emitter, upgradeConfig } from "@pixi/particle-emitter";
-//import * as SmokeParticle from "./emitter2.json";
 
 export class Player extends Container{
  
@@ -24,23 +22,17 @@ export class Player extends Container{
     public hitbox:Graphics = new Graphics();
     public hitboxRolling:Graphics;
     public hitboxNormal:Graphics;
-
     private SFXUp = sound.find("SFXUp");
-    ////private Smoke: Emitter;
+
     constructor(){
         super();
 
-        //this.Smoke = new Emitter(this, upgradeConfig(SmokeParticle, Texture.from("SmokeP"))); //Nos pide un contenedor para las particulas y una configuracion
-       // this.Smoke.spawnPos.x = 100;
-        //this.Smoke.spawnPos.y = 100;
-        //this.Smoke.emit = true;
 
         //HitBox
         this.hitboxNormal = new Graphics;
         this.hitboxNormal.beginFill(0xFF0000,0.3);
         this.hitboxNormal.drawRect(64,48,56,112);
         this.hitboxNormal.endFill();
-        //this.addChild(this.hitboxNormal);
         this.hitboxNormal.visible = false;
 
         this.hitboxRolling = new Graphics;
@@ -48,7 +40,6 @@ export class Player extends Container{
         this.hitboxRolling.drawRect(64,80,56,64);
         this.hitboxRolling.endFill();
         this.hitboxRolling.visible = false;
-       // this.addChild(this.hitboxRolling);
         this.hitbox.visible = false;
 
         //this.hitbox = this.hitboxNormal;
@@ -56,12 +47,22 @@ export class Player extends Container{
         this.hitbox = this.hitboxNormal.clone();
         this.hitbox.visible = false;
         this.addChild(this.hitbox);
-        
-        //this.hitbox.clear;
-        //this.hitbox = this.hitboxNormal;
 
         //Animations
         this.Cacho = new StateAnimation();
+        this.Cacho.addState("Idle",[
+            Texture.from("Idle0"),
+            Texture.from("Idle1"),
+            Texture.from("Idle2"),
+            Texture.from("Idle3"),
+            Texture.from("Idle4"),
+            Texture.from("Idle5"),
+            Texture.from("Idle6"),
+            Texture.from("Idle7"),
+            Texture.from("Idle8"),
+            Texture.from("Idle9")
+
+        ]);
         this.Cacho.addState("JumpDown",[Texture.from("Jump3")]);
         this.Cacho.addState("JumpUp",[Texture.from("Jump1")]);
         this.Cacho.addState("Run",[
@@ -85,7 +86,7 @@ export class Player extends Container{
             
         ]);
         this.addChild(this.Cacho);
-        this.Cacho.playState("Run");
+        this.Cacho.playState("Idle");
     }
     
     public setGS(GS:number):void{
@@ -93,7 +94,6 @@ export class Player extends Container{
     }
 
     public update(_deltaTime:number){
-        //this.Smoke.update(_deltaTime/100);
         this.Cacho.update(_deltaTime);
 
         if(this.isJumping){this.jump();}
@@ -109,9 +109,6 @@ export class Player extends Container{
             if(!this.isJumping && !this.isDown){
                 this.Cacho.playState("Run");
             }
-           
-
-            
             this.hitbox.destroy();
             this.hitbox = new Graphics();
             this.hitbox = this.hitboxNormal.clone();
@@ -125,11 +122,13 @@ export class Player extends Container{
         if(this.position.y >= this.floor && this.isDown){
             this.isDown = false;
             this.Cacho.playState("Run");
-             //this.Smoke.emitNow();
-
-        //this.Smoke.autoUpdate = true;
         }
+    }
 
+    public letsDown():void{
+        this.Cacho.playState("JumpDown");
+        this.isJumping = false;
+        this.isDown = true;
     }
 
     public fRoll():void{

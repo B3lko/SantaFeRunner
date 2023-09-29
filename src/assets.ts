@@ -36,6 +36,17 @@ export const assets = {
     Roll6:"./Character/Roll/Roll6.png",
     Roll7:"./Character/Roll/Roll7.png",
 
+    Idle0:"./Character/Idle/Idle0.png",
+    Idle1:"./Character/Idle/Idle1.png",
+    Idle2:"./Character/Idle/Idle2.png",
+    Idle3:"./Character/Idle/Idle3.png",
+    Idle4:"./Character/Idle/Idle4.png",
+    Idle5:"./Character/Idle/Idle5.png",
+    Idle6:"./Character/Idle/Idle6.png",
+    Idle7:"./Character/Idle/Idle7.png",
+    Idle8:"./Character/Idle/Idle8.png",
+    Idle9:"./Character/Idle/Idle9.png",
+
 
     //UI Assets
     Pause:"./UI/PauseIcon.png",
@@ -73,7 +84,7 @@ export const assets = {
 
     //SceneMenu
     BG0: "./SceneMenu/SkyMenu.png",
-    BG1: "./SceneMenu/BridgeV5.png",
+    BG1: "./SceneMenu/Bridge.png",
     By: "./SceneMenu/By.png",
     SantaFe: "./SceneMenu/SantaFe.png",
     Runner: "./SceneMenu/Runner.png",

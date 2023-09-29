@@ -1,4 +1,4 @@
-import { Container, TextStyle, Texture, TilingSprite, Text, Sprite, NineSlicePlane, Graphics, BlurFilter/*, Rectangle*/} from "pixi.js";
+import { Container, TextStyle, Texture, TilingSprite, Text, Sprite, NineSlicePlane, Graphics, BlurFilter} from "pixi.js";
 import { Player } from "./Player";
 import { Truck } from "./Truck";
 import { checkCollision } from "./IHitbox";
@@ -47,6 +47,7 @@ export class SceneGame extends SceneBase{
     Death2: Sprite = Sprite.from("Death2");
     Beer: Sprite = Sprite.from("Beer");
     Beer2: Sprite = Sprite.from("Beer");
+    Beer3: Sprite = Sprite.from("Beer");
     
     //------------Sounds_&_Music------------//
     private sndMG = sound.find("MusicGame");
@@ -56,12 +57,7 @@ export class SceneGame extends SceneBase{
     private SFXImpact = sound.find("SFXImpact");
     private SFXImpact2 = sound.find("SFXImpact2");
     
-    
-    
-    
-
-
-    
+    //------------TextStyles------------//
     tstyle = new TextStyle({
         fontSize: 50,
         fontFamily: "Minecraft",
@@ -71,8 +67,15 @@ export class SceneGame extends SceneBase{
     dropShadowDistance: 5,
     });
 
+    tstyleTap = new TextStyle({
+        fontSize: 30,
+        fontFamily: "Minecraft",
+        fill: 0x000000
+    });
+
     //----------TEXTS----------//
     TScore = new Text("Score: 0",this.tstyle);
+    TScore2 = new Text("Score: 0",this.tstyle);
     TPause = new Text("Pause",this.tstyle);
     TPlay = new Text("Play",this.tstyle);
     TRetry = new Text("Retry",this.tstyle);
@@ -85,6 +88,8 @@ export class SceneGame extends SceneBase{
     TContinue = new Text("Continue",this.tstyle);
     Tx = new Text("X",this.tstyle);
     TBeers = new Text("0", this.tstyle);
+    TBeers2 = new Text("0", this.tstyle);
+    Tap = new Text("Tap to play!", this.tstyleTap);
 
 
     //----------BOOLEANS----------//
@@ -95,7 +100,8 @@ export class SceneGame extends SceneBase{
     Ready1 = false; //Perder una sola vez
     public isPause = false;
     okayaux: Boolean = false;
-    //isIdle: boolean = true;
+    isIdle: boolean = true;
+    OnceIdle: boolean = false;
 
     //----------NUMBERS----------//
     TimeStng = 0;
@@ -127,17 +133,9 @@ export class SceneGame extends SceneBase{
     constructor(){
         super();
 
-       
-
         this.Tx.text = "X" + this.PriceBeers;
         this.world = new Container();
         this.Stng = new Container();
-
-        sound.play("MusicGame",{
-            volume: 0.35,
-            loop: true,
-            singleInstance:true
-        });
 
         this.world = new Container();
         this.world.addChild(this.Sky1);
@@ -148,6 +146,18 @@ export class SceneGame extends SceneBase{
         this.world.addChild(this.player1);
 
         this.player1.position.set(100,480);
+
+        this.Tap.angle= -15;
+        this.Tap.pivot.set(this.Tap.width/2,this.Tap.height/2);
+        this.Tap.position.set(this.player1.position.x*2,this.player1.position.y);
+        this.world.addChild(this.Tap);
+
+        new Tween(this.Tap)
+            .to({angle: 15, scale: {x:1.1,y:1.1}},5000)
+            .yoyo(true)
+            .repeat(Infinity)
+            .start();
+
 
         this.GenerateTruck();
         this.Truck1.position.set(-400,352);
@@ -174,9 +184,6 @@ export class SceneGame extends SceneBase{
         this.PauseW.addChild(this.SndOff);
         this.SndOff.position.set(10,10);
 
-        
-
-
         this.PauseW.addChild(this.SndOn);
 
         this.PauseW.pivot.set(this.PauseW.width/2,this.PauseW.height/2);
@@ -189,7 +196,10 @@ export class SceneGame extends SceneBase{
         this.PauseW.addChild(this.TPause);
         this.TPause.pivot.x = (this.TPause.width/2);
         this.TPause.position.set(this.PauseW.width/2,10);
-        //Iconos de la pausa
+
+
+        
+        //------------Iconos de la pausa------------//
         //Play
         this.Play.pivot.set(this.Play.width/2,this.Play.height/2);
         this.Play.position.set(this.PauseW.width/2,230);
@@ -226,10 +236,6 @@ export class SceneGame extends SceneBase{
         this.curtain2.endFill();
         this.curtain2.visible = false;
 
-        //const BlurF = new BlurFilter();
-        //this.PauseW.filters = [new BlurFilter];
-        //this.world.filters = [new BlurFilter];
-        
         this.curtain = new Graphics;
         this.curtain.beginFill(0x000000,0.7);
         this.curtain.drawRect(0,0,1280,720);
@@ -245,22 +251,13 @@ export class SceneGame extends SceneBase{
         this.Smoke.spawnPos.set(0,230);
         this.Smoke.emit = true;
 
-        
         this.curtain.visible = false;
         
         this.curtain.addChild(this.PauseW);
         this.curtain2.filters = [new BlurFilter];
-
-        
-
-        //this.world.addChild(this.curtain);
-        
-
         
         this.addChild(this.world);
         this.addChild(this.curtain);
-        
-
 
         this.Retry.on("pointertap",this.onTouchStartRetry,this);
         this.Retry.interactive = true;
@@ -280,8 +277,6 @@ export class SceneGame extends SceneBase{
 
         this.SndOff.on("pointertap",this.onTouchStartSndOff,this);
         this.SndOff.interactive = true;
-
-        //console.log(sound.);
         
         if(sound.volumeAll == 1){
             this.SndOff.visible = false;
@@ -290,7 +285,6 @@ export class SceneGame extends SceneBase{
             this.SndOn.visible = false;
         }
         
-
         this.Beer2.on("pointertap",this.onTouchStartBeer,this);
         this.Beer2.interactive = true;
 
@@ -321,7 +315,6 @@ export class SceneGame extends SceneBase{
         this.T3.position.set(this.TStarting.x,this.TStarting.y + 35);
         this.T3.visible = false;
 
-
         this.Beer.addChild(this.TBeers);
         this.TBeers.position.set(80,10);
 
@@ -348,6 +341,24 @@ export class SceneGame extends SceneBase{
         this.TLose.pivot.set(this.TLose.width/2,this.TLose.height/2);
         this.TLose.position.set(this.Lose.width/2,50);
         this.Lose.addChild(this.TLose);
+        this.Lose.addChild(this.TScore2);
+        this.Lose.addChild(this.TBeers2);
+
+        this.TScore2.pivot.set(this.TScore2.width/2,this.TScore2.height/2);
+        this.TScore2.scale.set(0.6,0.6);
+        this.TScore2.position.y = (this.Lose.height/3) + 20;
+        this.TScore2.position.x = this.Lose.width/(4/3);
+
+        this.Lose.addChild(this.Beer3);
+        this.Beer3.position.y = (this.Lose.height/3) + 20;
+        this.Beer3.position.x = this.Lose.width/6;
+
+        this.Beer3.addChild(this.TBeers2);
+        this.Beer3.pivot.set(this.Beer3.width/2,this.Beer3.height/2);
+        this.Beer3.scale.set(0.75,0.75);
+        this.TBeers2.scale.set(0.75,0.75);
+
+        this.TBeers2.position.set(80,15);
 
         this.addChild(this.Death1);
         this.Death1.visible = false;
@@ -359,24 +370,44 @@ export class SceneGame extends SceneBase{
 
         //Activamos que la escena sea interactiva para poder hacer los slides
         this.interactive = true;
-        /*if(this.isIdle){
+        if(this.isIdle){
             this.on("pointerdown",this.setIdle,this);
-        }*/
-        this.on("pointerdown",(e)=>{ this.Firsty = e.data.global.y; }); //Obtenemos el punto en y inicial
-        this.on("pointerup",(e)=>{ //Cuando se suelta nos fijamos si y esta arriba o abajo del punto inicial
-            this.Lasty = e.data.global.y;
-            if(this.Firsty>this.Lasty && !this.isPause){
-                this.player1.JumpStart();
-            }
-            else if(this.Firsty<this.Lasty && !this.isPause){
-                this.player1.fRoll();
-            }
-        });
+        }
+
+        if(this.isIdle){
+            this.on("pointerdown",(e)=>{ this.Firsty = e.data.global.y; }); //Obtenemos el punto en y inicial
+            this.on("pointerup",(e)=>{ //Cuando se suelta nos fijamos si y esta arriba o abajo del punto inicial
+                this.Lasty = e.data.global.y;
+                if(this.Firsty>this.Lasty && !this.isPause){
+                 this.player1.JumpStart();
+                }
+                 else if(this.Firsty<this.Lasty && !this.isPause){
+                    if(this.player1.isJumping){
+                        this.player1.letsDown();
+                    }
+                    else{
+                        this.player1.fRoll();
+                    }
+                    
+                 }
+            });
+        }
+        
     }
 
-    /*public setIdle():void{
-        this.isIdle = false;
-    }*/
+    public setIdle():void{
+        if(!this.OnceIdle){
+            this.OnceIdle = true;
+            this.Tap.visible = false;
+            this.isIdle = false;
+            this.player1.Cacho.playState("Run");
+            sound.play("MusicGame",{
+                volume: 0.35,
+                loop: true,
+                singleInstance:true
+            });
+        }
+    }
 
 
     public update(frame:number, _deltaMS:number ){
@@ -415,12 +446,13 @@ export class SceneGame extends SceneBase{
             this.player1.Cacho.playState("JumpDown");
         }
        
-        if(!this.isPause && !this.Loser/* && !this.isIdle*/){
+        if(!this.isPause && !this.Loser && !this.isIdle){
             this.gameSpeed += 0.5;
             this.gameSpeedAux = this.gameSpeed;
             this.player1.setGS(this.gameSpeed);
             this.Score += this.gameSpeed/1000;
             this.TScore.text = "Score: " +String(Math.round(this.Score));
+            this.TScore2.text = "Score: " +String(Math.round(this.Score));
             this.player1.update(frame/* ,_deltaFrame */);
 
             this.Sky1.tilePosition.x -= this.gameSpeed * frame/1000;
@@ -434,6 +466,7 @@ export class SceneGame extends SceneBase{
             this.BM1.Update(this.player1.getHitbox(),this.Truck1, (this.BridgeVelocity + this.gameSpeed * frame/1000),this.Bike1);
             this.PointsBeer = this.BM1.getPoints();
             this.TBeers.text = (this.PointsBeer);
+            this.TBeers2.text = (this.PointsBeer);
             if(this.Truck1.position.x + this.Truck1.width < 0){
                 this.GenerateTruck();
             }
@@ -575,6 +608,7 @@ export class SceneGame extends SceneBase{
             this.PriceBeers *= 2;
             this.Tx.text = "X" + this.PriceBeers;
             this.TBeers.text = (this.PointsBeer);
+            this.TBeers2.text = (this.PointsBeer);
             this.BM1.setPoints(this.PointsBeer);
             this.Loser = false;
             this.player1.visible = true;
@@ -591,10 +625,12 @@ export class SceneGame extends SceneBase{
             this.BeerOpen.play();
             this.curtain2.visible = false;
             this.world.filters?.pop();
+            this.BM1.relocationDead();
         }
     }
     
     private onTouchStartRetry():void{
+        this.sndMG.stop();
         SceneManager.ChangeScene(new SceneGame());
     }
 
