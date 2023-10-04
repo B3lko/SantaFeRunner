@@ -36,6 +36,7 @@ export class SceneGame extends SceneBase{
         35,35,35,35
     )
 
+
     //----------SPRITES----------//
     SndOff: Sprite = Sprite.from("SndOff");
     SndOn: Sprite = Sprite.from("SndOn");
@@ -49,6 +50,7 @@ export class SceneGame extends SceneBase{
     Beer2: Sprite = Sprite.from("Beer");
     Beer3: Sprite = Sprite.from("Beer");
     
+
     //------------Sounds_&_Music------------//
     private sndMG = sound.find("MusicGame");
     private Ring = sound.find("Ring");
@@ -57,6 +59,7 @@ export class SceneGame extends SceneBase{
     private SFXImpact = sound.find("SFXImpact");
     private SFXImpact2 = sound.find("SFXImpact2");
     
+
     //------------TextStyles------------//
     tstyle = new TextStyle({
         fontSize: 50,
@@ -72,6 +75,7 @@ export class SceneGame extends SceneBase{
         fontFamily: "Minecraft",
         fill: 0x000000
     });
+
 
     //----------TEXTS----------//
     TScore = new Text("Score: 0",this.tstyle);
@@ -103,6 +107,7 @@ export class SceneGame extends SceneBase{
     isIdle: boolean = true;
     OnceIdle: boolean = false;
 
+    
     //----------NUMBERS----------//
     TimeStng = 0;
     V1R = 600;
@@ -379,14 +384,19 @@ export class SceneGame extends SceneBase{
             this.on("pointerup",(e)=>{ //Cuando se suelta nos fijamos si y esta arriba o abajo del punto inicial
                 this.Lasty = e.data.global.y;
                 if(this.Firsty>this.Lasty && !this.isPause){
-                 this.player1.JumpStart();
+                    if(this.Firsty-this.Lasty >= 30){
+                        this.player1.JumpStart();
+                    }
                 }
                  else if(this.Firsty<this.Lasty && !this.isPause){
                     if(this.player1.isJumping){
                         this.player1.letsDown();
                     }
                     else{
-                        this.player1.fRoll();
+                        if(this.Lasty-this.Firsty >= 30){
+                            this.player1.fRoll();
+                        }
+                        
                     }
                     
                  }
@@ -540,6 +550,7 @@ export class SceneGame extends SceneBase{
             this.Ready1 = true;
         }  
     }
+
     private doRun():void{
         if(!this.player1.isJumping){
             this.player1.isDown = false;
@@ -548,12 +559,14 @@ export class SceneGame extends SceneBase{
             this.TruckUp = true;
             this.player1.Cacho.playState("Run");
         }
-        
     }
+
+
+    //------------Generar camion------------//
     private GenerateTruck():void{
         this.okayaux = false;
         while(!this.okayaux){
-            this.Truck1.position.x = 1280 + 5000*Math.random();
+            this.Truck1.position.x = SceneManager.WIDTH + 5000*Math.random();
             if(checkCollision(this.Sign1.getHitbox3(),this.Truck1.getHitbox())||
             checkCollision(this.Sign1.getHitbox3(),this.Truck1.getHitbox4()) ||
             checkCollision(this.Bike1.getHitbox(),this.Truck1.getHitbox4()) ||
@@ -567,10 +580,12 @@ export class SceneGame extends SceneBase{
         this.BM1.relocationArray(this.Truck1,this.Bike1);
     }
 
+
+    //------------Generar señal------------//
     private GenerateSign():void{
         this.okayaux = false;
         while(!this.okayaux){
-            this.Sign1.position.x = 1280 + 5000*Math.random();
+            this.Sign1.position.x = SceneManager.WIDTH + 5000*Math.random();
             if(checkCollision(this.Sign1.getHitbox3(),this.Truck1.getHitbox())||
             checkCollision(this.Sign1.getHitbox3(),this.Truck1.getHitbox4()) ||
             checkCollision(this.Sign1.getHitbox3(),this.Bike1.getHitbox())
@@ -583,10 +598,12 @@ export class SceneGame extends SceneBase{
         }
     }
 
+
+    //------------Generar Bici------------//
     private GenerateBike():void{
         this.okayaux = false;
         while(!this.okayaux){
-            this.Bike1.position.x = 1280 + 5000*Math.random();
+            this.Bike1.position.x = SceneManager.WIDTH + 5000*Math.random();
             if(
             checkCollision(this.Bike1.getHitbox(),this.Truck1.getHitbox())||
             checkCollision(this.Bike1.getHitbox(),this.Truck1.getHitbox4()) ||

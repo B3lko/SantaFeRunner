@@ -12,7 +12,6 @@ export const assets = {
     SmokeP:"./Particles/smokeparticle.png",
     
 
-
     //Player
     Death1:"./Character/Death1.png",
     Death2:"./Character/Death2.png",
@@ -62,10 +61,11 @@ export const assets = {
     Music2Menu: "./UI/Music2Menu.png",
     FSOn: "./UI/FullScreenOn.png",
     FSOff: "./UI/FullScreenOff.png",
+    Tuto: "./UI/TutoIcon.png",
 
 
     //Music & Sounds
-    MusicGame:"./Music/Soy_sabalero_8Bits.mp3",
+    MusicGame:"./Music/Soy_Sabalero_8Bits.mp3",
     MusicMenu:"./Music/Dame_un_beso_8Bits.mp3",
     Ring:"./Music/RingRing.mp3",
     SFXPickUp:"./Music/Retro PickUp Coin 04.wav",
@@ -76,11 +76,10 @@ export const assets = {
     SFXImpact:"./Music/impactSoft_medium_001.ogg",
     SFXImpact2:"./Music/impactWood_medium_004.ogg",
     
-    
-
 
     //Fonts
     Minecraft:"./Fonts/Minecraft.ttf",
+
 
     //SceneMenu
     BG0: "./SceneMenu/SkyMenu.png",

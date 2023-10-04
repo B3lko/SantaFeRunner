@@ -1,4 +1,4 @@
-import { Assets, Graphics } from "pixi.js";
+import { Assets, Graphics, Text } from "pixi.js";
 import { SceneManager } from "./SceneManager";
 import { SceneBase } from "./SceneBase";
 import { SceneMenu } from "../SceneMenu";
@@ -10,6 +10,7 @@ export class LoaderScene extends SceneBase{
 
     public bar: Graphics;
     public BG: Graphics;
+    public TLoading: Text;
 
     constructor(){
         super();
@@ -19,6 +20,7 @@ export class LoaderScene extends SceneBase{
         this.BG.drawRect(0,0,SceneManager.WIDTH,SceneManager.HEIGTH);
         this.BG.endFill();
         this.addChild(this.BG);
+ 
 
         this.bar = new Graphics();
         this.setBarPercent(0);
@@ -27,8 +29,13 @@ export class LoaderScene extends SceneBase{
         this.bar.position.x = SceneManager.WIDTH / 2;
         this.bar.position.y = SceneManager.HEIGTH / 2;
         this.addChild(this.bar);   
-
         this.downAssets();
+
+
+        this.TLoading = new Text("L o a d i n g . . .", {fontWeight:"bolder", fontSize:30, fill:0xFFFFFF });
+        this.TLoading.anchor.set(0.5);
+        this.TLoading.position.set(SceneManager.WIDTH/2,SceneManager.HEIGTH/2);
+        this.addChild(this.TLoading)
     }
 
     private async downAssets(){
@@ -38,9 +45,7 @@ export class LoaderScene extends SceneBase{
     }
 
     private setBarPercent(percent:number){
-        //this.bar.scale.x = (percent/100)
-
-        const factor = percent/100;
+        const factor = percent;
         this.bar.clear();
 
         this.bar.beginFill(0xFF00000);
