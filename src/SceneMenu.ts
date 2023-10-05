@@ -8,6 +8,7 @@ import { SceneGame } from "./SceneGame";
 import { Capacitor } from "@capacitor/core";
 import { App } from "@capacitor/app";
 import { Tween } from "tweedle.js";
+import { SceneTutorial } from "./SceneTutorial";
 
 export class SceneMenu extends SceneBase{
 
@@ -63,6 +64,7 @@ export class SceneMenu extends SceneBase{
         super();
 
         this.sndMM.loop = true;
+        if(!this.sndMM.isPlaying)
         this.sndMM.play();
         
         this.SantaFe.scale.set(0.9);
@@ -185,6 +187,7 @@ export class SceneMenu extends SceneBase{
         this.Music2Menu.on("pointertap",this.onTouchStartSndOff,this);
         this.FSOff.on("pointertap",this.onTouchStartFSO,this);
         this.FSOn.on("pointertap",this.onTouchStartFSO,this);
+        this.Tuto.on("pointertap",this.onTouchStartTuto,this);
 
         //Tween del avioncito
         new Tween(this.By)
@@ -265,6 +268,9 @@ export class SceneMenu extends SceneBase{
         }
     }
 
+    private onTouchStartTuto():void{
+        SceneManager.ChangeScene(new SceneTutorial());
+    }
 
     //------------Jugar------------//
     private onTouchStartPlay():void{

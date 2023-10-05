@@ -62,6 +62,7 @@ export const assets = {
     FSOn: "./UI/FullScreenOn.png",
     FSOff: "./UI/FullScreenOff.png",
     Tuto: "./UI/TutoIcon.png",
+    BlueHome: "./UI/BlueHomeIcon.png",
 
 
     //Music & Sounds
@@ -89,4 +90,10 @@ export const assets = {
     Runner: "./SceneMenu/Runner.png",
     Setuval: "./SceneMenu/SetubalLagoon.png",
     Base: "./SceneMenu/Base.png",
+
+    //SceneTutorial
+    TutoBG: "./SceneTutorial/FabLabV1Big.png",
+    Hand: "./SceneTutorial/Hand.png",
+    TVS: "./SceneTutorial/TVScreen.png",
+    TV13: "./SceneTutorial/TV13.png",
 }
