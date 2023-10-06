@@ -92,7 +92,7 @@ export const assets = {
     Base: "./SceneMenu/Base.png",
 
     //SceneTutorial
-    TutoBG: "./SceneTutorial/FabLabV1Big.png",
+    TutoBG: "./SceneTutorial/FabLab.png",
     Hand: "./SceneTutorial/Hand.png",
     TVS: "./SceneTutorial/TVScreen.png",
     TV13: "./SceneTutorial/TV13.png",

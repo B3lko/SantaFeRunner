@@ -9,6 +9,7 @@ import { Capacitor } from "@capacitor/core";
 import { App } from "@capacitor/app";
 import { Tween } from "tweedle.js";
 import { SceneTutorial } from "./SceneTutorial";
+import { StatusBar } from "@capacitor/status-bar";
 
 export class SceneMenu extends SceneBase{
 
@@ -205,14 +206,30 @@ export class SceneMenu extends SceneBase{
         new Tween(this.Base)
         .to({x:795, y:500}, 2000)
         .start();    
-    }
 
+
+        StatusBar.hide();
+
+
+    }
 
     //------------Update------------//
     public update(_deltaTime:number/* ,_deltaFrame:number */){
+
         this.BackGround0.tilePosition.x += 0.2;
         this.Setuval.tilePosition.x += 0.2;
         
+        App.addListener("appStateChange", (e) => {
+            if(e.isActive){
+                //Reanudar el juego
+                sound.play;
+            }
+            else{
+                //Pausar el juego
+                sound.pause;
+            }
+        });
+
         if(this.By.position.x > 0 && (this.By.position.x) < SceneManager.WIDTH && !this.SFXPlane.isPlaying){
             this.SFXPlane.play({
                 singleInstance:true,

@@ -13,6 +13,8 @@ import { Bike } from "./Bike";
 import * as DustParticle from "./emitterDust.json";
 import * as SmokeParticle from "./emitterSmoke.json";
 import { Emitter, upgradeConfig } from "@pixi/particle-emitter";
+import { StatusBar } from "@capacitor/status-bar";
+import { App } from "@capacitor/app";
 
 export class SceneGame extends SceneBase{
     private world:Container;
@@ -93,7 +95,7 @@ export class SceneGame extends SceneBase{
     Tx = new Text("X",this.tstyle);
     TBeers = new Text("0", this.tstyle);
     TBeers2 = new Text("0", this.tstyle);
-    Tap = new Text("Tap to play!", this.tstyleTap);
+    Swap = new Text("Tap to play!", this.tstyleTap);
 
 
     //----------BOOLEANS----------//
@@ -152,12 +154,12 @@ export class SceneGame extends SceneBase{
 
         this.player1.position.set(100,480);
 
-        this.Tap.angle= -15;
-        this.Tap.pivot.set(this.Tap.width/2,this.Tap.height/2);
-        this.Tap.position.set(this.player1.position.x*2,this.player1.position.y);
-        this.world.addChild(this.Tap);
+        this.Swap.angle= -15;
+        this.Swap.pivot.set(this.Swap.width/2,this.Swap.height/2);
+        this.Swap.position.set(this.player1.position.x*2,this.player1.position.y);
+        this.world.addChild(this.Swap);
 
-        new Tween(this.Tap)
+        new Tween(this.Swap)
             .to({angle: 15, scale: {x:1.1,y:1.1}},5000)
             .yoyo(true)
             .repeat(Infinity)
@@ -373,6 +375,8 @@ export class SceneGame extends SceneBase{
         this.Death2.position.set(10,540);
         this.world.addChild(this.curtain2);
 
+        StatusBar.hide();
+
         //Activamos que la escena sea interactiva para poder hacer los slides
         this.interactive = true;
         if(this.isIdle){
@@ -408,7 +412,7 @@ export class SceneGame extends SceneBase{
     public setIdle():void{
         if(!this.OnceIdle){
             this.OnceIdle = true;
-            this.Tap.visible = false;
+            this.Swap.visible = false;
             this.isIdle = false;
             this.player1.Cacho.playState("Run");
             sound.play("MusicGame",{
@@ -421,6 +425,17 @@ export class SceneGame extends SceneBase{
 
 
     public update(frame:number, _deltaMS:number ){
+        
+        App.addListener("appStateChange", (e) => {
+            if(e.isActive){
+                //Reanudar el juego
+                sound.play;
+            }
+            else{
+                //Pausar el juego
+                sound.pause;
+            }
+        });
 
         //Se actualizan las particulas
         this.Dust.update(_deltaMS/1000);

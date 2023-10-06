@@ -5,6 +5,10 @@ import { SceneMenu } from "./SceneMenu";
 import { Player } from "./Player";
 import { Tween } from "tweedle.js";
 import { CRTFilter } from "@pixi/filter-crt";
+import { OutlineFilter } from "@pixi/filter-outline";
+import { StatusBar } from "@capacitor/status-bar";
+import { sound } from "@pixi/sound";
+import { App } from "@capacitor/app";
 
 export class SceneTutorial extends SceneBase{
 
@@ -28,7 +32,7 @@ export class SceneTutorial extends SceneBase{
     player1 = new Player();
 
     scrollStart: number = 0;
-    scrollDurationMS :number = 3000;
+    scrollDurationMS :number = 1500;
 
     Ready1:boolean = false;
     Ready2:boolean = true;
@@ -79,7 +83,7 @@ export class SceneTutorial extends SceneBase{
 
         this.scrollStart = Date.now()
         new Tween(this.Hand)
-            .to({y:330}, 1500)
+            .to({y:330}, 500)
             .delay(1000)
             .start()
 
@@ -88,6 +92,11 @@ export class SceneTutorial extends SceneBase{
         });
 
         this.TV.filters = [myCRT];
+
+        const myOutLine = new OutlineFilter();
+        this.player1.filters = [myOutLine];
+
+        StatusBar.hide();
     }
 
     private onTouchStartMenu():void{
@@ -96,16 +105,27 @@ export class SceneTutorial extends SceneBase{
 
     public update(_deltaTime:number/* ,_deltaFrame:number */){
 
+        App.addListener("appStateChange", (e) => {
+            if(e.isActive){
+                //Reanudar el juego
+                sound.play;
+            }
+            else{
+                //Pausar el juego
+                sound.pause;
+            }
+        });
+        
         if(this.scrollStart < Date.now() - this.scrollDurationMS && !this.Ready1){
             this.Ready1 = true;
             this.player1.Cacho.playState("JumpUp");
             new Tween(this.player1)
-            .to({y:290}, 1500)
+            .to({y:290}, 500)
             .start()
             .onComplete(()=>{
                 this.player1.Cacho.playState("JumpDown");
                 new Tween(this.player1)
-                .to({y:400}, 1500)
+                .to({y:400}, 500)
                 .start()
                 .onComplete(()=>{
                     this.player1.Cacho.playState("Idle");
@@ -114,8 +134,8 @@ export class SceneTutorial extends SceneBase{
                     this.TSUp.visible = false;
                     this.TSDown.visible = true;
                     new Tween(this.Hand)
-                    .to({y:480}, 1500)
-                    .delay(1000)
+                    .to({y:480}, 500)
+                    .delay(500)
                     .start()
                 });
             });
@@ -134,8 +154,8 @@ export class SceneTutorial extends SceneBase{
                 this.TSDown.visible = false;
                 this.Ready1 = false;
                 new Tween(this.Hand)
-                .to({y:330}, 1500)
-                .delay(1000)
+                .to({y:330}, 500)
+                .delay(500)
                 .start()
             });
         }
