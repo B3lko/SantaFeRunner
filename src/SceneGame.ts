@@ -337,7 +337,7 @@ export class SceneGame extends SceneBase{
         this.Lose.addChild(this.Beer2);
 
         this.Beer2.addChild(this.Tx);
-        this.Tx.position.set(60,20);
+        this.Tx.position.set(80,20);
         this.Tx.scale.set(0.5,0.5);
 
         this.Beer2.addChild(this.TContinue);

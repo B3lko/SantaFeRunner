@@ -3,9 +3,9 @@ export const assets = {
     Sky1: "./SceneGame/Sky_layer011.png",
     Sky2: "./SceneGame/Sky_layer022.png",
     Sky3: "./SceneGame/Sky_layer033.png",
-    Camion:"./SceneGame/Truckk.png",
+    Camion:"./SceneGame/Truckk2.png",
     Bridge:"./SceneGame/Bridgee.png",
-    Beer:"./SceneGame/Beer.png",
+    Beer:"./SceneGame/fish.png",
     Sign:"./SceneGame/Sign6.png",
     Bike:"./SceneGame/Bike.png",
     DustP:"./Particles/CartoonSmoke.png",
@@ -66,12 +66,12 @@ export const assets = {
 
 
     //Music & Sounds
-    MusicGame:"./Music/Soy_Sabalero_8Bits.mp3",
-    MusicMenu:"./Music/Dame_un_beso_8Bits.mp3",
+    MusicGame:"./Music/Powerup.mp3",
+    MusicMenu:"./Music/Dungeon.mp3",
     Ring:"./Music/RingRing.mp3",
     SFXPickUp:"./Music/Retro PickUp Coin 04.wav",
     SFXDown:"./Music/Retro Descending Short 20.wav",
-    BeerOpen:"./Music/BeerOpen.mp3",
+    BeerOpen:"./Music/Pop.mp3",
     SFXUp:"./Music/JumpUp.mp3",
     SFXPlane:"./Music/engineCircular_004.ogg",
     SFXImpact:"./Music/impactSoft_medium_001.ogg",
@@ -95,5 +95,5 @@ export const assets = {
     TutoBG: "./SceneTutorial/FabLab.png",
     Hand: "./SceneTutorial/Hand.png",
     TVS: "./SceneTutorial/TVScreen.png",
-    TV13: "./SceneTutorial/TV13.png",
+    TV13: "./SceneTutorial/live.png",
 }

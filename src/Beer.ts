@@ -10,7 +10,8 @@ export class Beer extends Container{
         super();
 
         this.hitbox.beginFill(0xFF00FF,0.3);
-        this.hitbox.drawRect(5,-10,60,90);
+       // this.hitbox.drawRect(5,-10,60,90);
+        this.hitbox.drawRect(-10,10,90,50);
         this.hitbox.endFill();
         this.hitbox.visible = false;
         this.addChild(this.hitbox);
